@@ -1,0 +1,55 @@
+\section{Exercice 3}
+\subsection{Question 1}
+From an NFA $A$ with $|Q|$ states we can construct a DFA which recognize the same language with $2^{|Q|}$ states. Then if $\llbracket E \rrbracket \neq \mathbb{N}$ there exists a path from the initial state $q_0$ to a non terminal state $p$.
+As there is $2^{|Q|}$ states, such a path (not a walk) is $\le 2^{|Q|}$ hence there exists $n \le 2^{|Q|}$ such that $n \notin \llbracket E \rrbracket$
+
+\subsection{Question 2}
+
+(a)
+
+We want to show that $A^n[q,q'] \ge 1$ iff $q'$ is reachable from $q$ in $n$ steps.
+
+Inductivly:
+\\By definition of $A$, $A[q,q'] \ge 1$ iff $q'$ is reachable from $q$ in 1 step.
+
+Suppose that $A^n[q,q'] \ge 1$ iff $q'$ is reachable from $q$ in $n$ steps.
+\\Then $A^{n+1}[q,q'] = \sum_{p\in Q} A^{n}[q,p] * A[p,q']$
+\\Then $A^{n+1}[q,q'] \ge 1$ iff $\exists p \in Q$ such that $A^{n}[q,p] \ge 1 \land A[p,q'] \le 1 $
+\\Hence $A^{n+1}[q,q'] \ge 1$ iff there exists a state $p$ such there exist a path in $n$ step from $q$ to $p$ and a path in 1 step from $p$ to $q'$.
+\\Hence $A^{n+1}[q,q'] \ge 1$ iff  there exists a path from $q$ to $q'$ in $n+1$ steps.
+
+So immediatly we have that $(I.A^n)[q] \ge 1$ iff $\exists p\in I$ and there exists $a$ path from $p$ to $q$ in $n$ steps
+Finaly we have that $(I.A^n.F^T) \ge 1$ iff $\exists p \in I$ and $q \in F$ such there exists a path from $p$ to $q$ in $n$ steps.
+Hence $(I.A^n.F^T) \ge 1$ iff $n \in \llbracket E \rrbracket$   
+
+(b)
+
+
+Instead of determining wether $A^{2^k}[i,j] > 0$ i will show that compute $A^{2^k}$ in polynomial time.
+Consider the algorithm;
+
+\begin{lstlisting}
+exp2(A,k) {
+	A2 = A * A;
+	A2K = A2;
+	for(i = 1; i<k ; i++)
+		A2K = A2K * A2;
+	return A2K;
+}
+\end{lstlisting}
+Then computing $A2$ cost $|Q|^3$ and each step of the iteration cost $|Q|^3$, hence computing $A2K$ cost $k*|Q|^3$. Checking wheter 
+$A^{2^k}[i,j] > 0$ is just a matter of accesing data which can be done linearly.
+So determining whether $A^{2^k}[i,j] > 0$ can be in polynomial time on $k$ and $|Q|$
+%$\forall i,j$ $A^2[i,j] = \sum_{t\le |Q|} A[i,t]*A[t,j]$ then it computed in %$\theta(|Q|)$ steps.
+%Moreover $A^{2^k}[i,j] =  \sum_{t\le |Q|} A^{2^(k-1)}[i,t]*A^2[t,j]$ which can %be computed in $\theta(|Q|)$ steps when knowing entierely $A^2$
+ 
+\subsection{Question 3}
+ 
+We are able to compute $A^{2^k}$ with $k\le|Q|$ in polynomial time among $|Q|$ as seen in question $(2.b)$ and because $k\le|Q|$.
+We are also able to compute $A^{2^{k}+1}$ with $k < |Q|$ in polynomial time among $|Q|$  by computing $A^{2^k}$ and applying the matricial produt which is polynomial too in order to obtain $A^{2^{k}+1}$.
+\\As applying $(2.a)$ is polynomial in $|Q|$ too as it is matricial product,
+the checking of any work $n \le 2^{|Q|}$ can be done in polynomial time among $|Q|$.
+
+As learn from question $(1)$ if there is a solution there is a solution $\le 2^{|Q|}$.
+\\Hence we just have to "guess" the right $n \le 2^|Q|$.
+\\Hence the problem is NP-Easy

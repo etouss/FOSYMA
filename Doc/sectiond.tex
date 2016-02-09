@@ -1,0 +1,80 @@
+\section{Exercice 4}
+\subsection{Question 1}
+
+$E_0 = (1^{p_{0,0}})^* . (\sum\limits_{i=1}^{p_{0,0}-1}1^i ) + \epsilon$
+
+\subsection{Question 2}
+
+$E_T  = \sum\limits_{i=0}^{N} \sum\limits_{j=0 }^{N} \left[
+		 (1^{p_{i,j}})^*.(\sum\limits_{t=n}^{p_{i,j}-1}1^t) \right]$
+		 
+We will take care during the construction of the rare case where exists $p_{i,j} = n$
+		 
+\subsection{Question 3}
+
+If $z = ap+k$ and $z = bq +l$ where $q$ and $p$ are prime number.
+\\Then $ap - bq = l -k$
+\\As $p$ and $q$ are prime $\exists u,v \in \mathbb{N}$ such that $up - vq = 1$.
+\\Then $a = u*(l-k)$ and $b = v*(l-k)$.
+
+Applying this we obtain that.
+
+$E_H = \sum\limits_{i=0}^{N-1} \sum\limits_{j=0}^{N} \left[
+		\sum\limits_{l>k|t_k[right] \neq t_l[left]}       
+		\left(
+		(1^{p_{i,j}\times u_0\times (l-k)})^* . 1^k 
+		\right)
+		+
+		\sum\limits_{k>l|t_k[right] \neq t_l[left]}       
+		\left(
+		(1^{p_{i+1,j}\times v_0\times (k-l)})^* . 1^l 
+		\right)
+		\right]$ 
+\\where $u_0 = min \{u | up_{i,j}-vp_{i+1,j} = 0\}$ and $v_0 = min \{v | up_{i,j}-vp_{i+1,j} = 0\}$
+
+Indeed by construction of $u_0$:
+\\$(1^{p_{i,j}\times u_0\times (l-k)})^* . 1^k mod[p_{i,j}] = k)$ and
+\\$(1^{p_{i,j}\times u_0\times (l-k)})^* . 1^k mod[p_{i+1,j}] = l)$
+
+Same way we obtain:
+
+$E_V = \sum\limits_{i=0}^{N} \sum\limits_{j=0}^{N-1} \left[
+\sum\limits_{l>k|t_k[top] \neq t_l[bot]}       
+\left(
+(1^{p_{i,j}\times u_0\times (l-k)})^* . 1^k 
+\right)
++
+\sum\limits_{k>l|t_k[top] \neq t_l[bot]}       
+\left(
+(1^{p_{i,j+1}\times v_0\times (k-l)})^* . 1^l 
+\right)
+\right]$ 
+\\where $u_0 = min \{u | up_{i,j}-vp_{i,j+1} = 0\}$ and $v_0 = min \{v | up_{i,j}-vp_{i+1,j} = 0\}$
+
+\subsection{Question 4}
+
+The construction of $E_0$ is linear among $n$ if we consider we know as many big enough prime number as we need and that they only depend on $n$.
+
+The construction of $E_T$ is polynomial among $N$ as we have to "sum" over $N$.
+\\ie. $\Theta(N^2*n)$
+
+Same as the knowing of prime number we can assume that we already know $u_0$ and $v_0$ for each couples $(p_{i,j},p_{i+1,j})$  and $(p_{i,j},p_{i,j+1})$
+Then we have to "sum" over $N$ and check for all $k,l$ whether if $t_k[top] \neq t_l[bot]$ the worst case we be that there is no matching.
+\\ie. $\Theta(N^2*n^2)$
+
+Hence the construction of each expression can  be computed in polynomial time.
+
+Moreover we clearly have the fact that $T$ admit a tilling of size $N$ iff \\$\exists z \notin E_0+E_T+E_H+E_V$ 
+
+$\Longleftarrow$ is immediate by the construction of a $\Theta$ 
+\\Such that
+ $\Theta(i, j) = t_k$ iff $z mod [p_{i,j}] = k$ where $z \notin E_0+E_T+E_H+E_V$
+ 
+ $\Longrightarrow$ suppose there is a tilling then  there exist $z$
+ \\ Such that $z mod [p_{0,0}] = 0$ as $\Theta(0,0) = t_0$
+ \\$\forall i,j$, $z mod [p_{i,j}] < n$ as $\Theta(i,j) \in T$
+ \\$\forall i,j$, $z mod [p_{i,j}]=k \land z mod [p_{i+1,j}]=l \rightarrow t_k[right] = t_l[left]$ as $\Theta$ is a valid tilling
+ \\$\forall i,j$, $z mod [p_{i,j}]=k \land z mod [p_{i,j+1}]=l \rightarrow t_k[right] = t_l[left]$ as $\Theta$ is a valid tilling
+ 
+ Hence $z \notin E_0+E_T+E_H+E_V$
+ 

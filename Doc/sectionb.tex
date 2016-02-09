@@ -1,0 +1,102 @@
+\section{Exercice 2}
+\subsection{Question 1}
+In order to show that the tilling problem is in NP, we can show that there exists a polynomial algorithm that check if the given assignement $\Theta$ is a tillement.
+
+Input : A set of Tile $T$ , a grid size $N>0$ encoded in unary, and $\Theta = N \times N \rightarrow T$ an assignment.
+
+Question : Is $\Theta$ a valid tilling by $T$ for the grid $N \times N$
+
+\begin{lstlisting}
+checking_till(T,N,Theta) {
+	for(i = 0; i<N-1 ; i++){
+		for(j = 0; j<N-1; j ++){
+			if(Theta(i,j) not in T) return false;
+			else if (Theta(i,j)[left] <> Theta(i,j)[right]) return false;
+			else if (Theta(i,j)[bot] <> Theta(i,j+1)[top]) return false;
+		}
+	}
+	return true;
+}
+\end{lstlisting}
+
+checking\_till does at most $3*(N-1)^2$ operations then it is polynomial.
+\\And obtaining a tile in Theta can be done easily in linear time among $n$
+\\Hence the tilling probleme is in NP.
+
+\subsection{Question 2}
+
+Input: A one-tape nondeterministic Turing machine $M$ and a time bound $B > 0$ encoded in unary.
+\\Question: Does $M$ have a computation of length $B$ on the empty input $\epsilon$ ?
+
+Input: A tile set $T$ and a grid size $N > 0$ encoded in unary.
+\\Question: Does there exist a tiling of the $N \times N$ square grid by $T$ ?
+
+
+We tweak the machine $M$ such that we create a machine $M'$ which emulate $B-1$ steps of $M$ and then go to a special $q_{loose}$ state if the next state of the $M$ computation wasn't $accept$ or $reject$, on $q_{loose}$, $M'$ loops indefinetly.
+This construction is easily buildable in polynamial time in the way as the one in the previous question (As we have to count steps). 
+Such machine verify that $M'$ admit a computation of lenght $B$ on $\epsilon$ if and only if $M$ admit a computaton of lenght $B$ on $\epsilon$
+Moreover every computation that doesn't end in $B$ steps, land on $q_loose$ after $B$ steps.
+We will now assmume that the Machine considered is like $M'$.
+
+Let $M = <Q,\delta,q_0,\sum,\{b,\$\}>$
+
+We build the set of tile $T$. 
+\\First $N= B+1$, each row represent a state of the machine. ie. $B$ charactere from the alphabet and a state. As the computation of $M$ is bouded by $B$, their will be at most $B$  different character from $b$.
+
+
+For each $a \in \sum \cup \{b,\$\}$ we add to $T$
+\\$<f,a,f,a>$
+
+The intuition behind $f$ is the creation of a special color to force any element of the state to remain the same between two row (exept those concern by the transtion).
+
+For each $q \in Q, a \in \sum\cup \{b,\$\}$ if $(p,c,\downarrow) \in \delta (q,a)$ and $p\neq q_{loose}$ then we add to $T$
+\\$<q_p,p,f ,q>$ and (head tile)
+\\$<f,c,q_p,a>$ (right tile)
+
+The intuition here is to create a Tile which force her left side to remain unchange thanks to $f$, make the state move from $q$ to $p$ and warn the right tile representing $a$ that a transition from $q$ to $p$ as occured, then we add an another tile which reprensent the fact that $a$ can become $c$ when a  $q$ to $p$ transition occured.
+If $q$ can not become $p$ when reading $a$ then the tilling will stop there as there won't be any available tile to match $q_p$ and $a$.
+
+For each $q \in Q, a \in \sum\cup \{b,\$\}$ if $(p,c,\rightarrow) \in \delta (q,a)$ and $p\neq q_{loose}$ then we add to $T$
+\\$<q_c^{\rightarrow},c, f,q>$ and  (head tile)
+\\$<f,p,q_c^{\rightarrow},a>$ (right tile)
+
+The intuition here is to create a Tile which will make the head move on and write a $c$ at her place. This also warn her right tile that it moves from $q$ to $c$.
+It also add a tile representing the new head on the state $p$.
+If $q$ can not become $c$ when reading $a$ then the tilling will stop as $<f,p,q_c^{\rightarrow},a>$ wont exist.
+
+
+For each $q \in Q, a \in \sum\cup \{b,\$\}$ if $(p,c,\leftarrow) \in \delta (q,a)$ and $p\neq q_{loose}$ then we add to $T$
+\\For each $d \in \sum\cup \{b,\$\}$
+\\$<q_c^a,d,q_c^a\times d,q>$ and (head tiles)
+\\$<q_c^a\times d,p,f,d>$ and (left tiles)
+\\$<f,c,q_c^a,a>$ (right tile)
+
+Here it's a bit tricky has we have to imagine both what the left and right tile are.
+In order to be able to do so we have to create many colors.
+If there isn't a transition $(p,c,\leftarrow) \in \delta (q,a)$ then $<q_c^a\times d,p,f,d>$ won't exists. If $a$ wasn't the right tile then we can't apply $<f,c,q_c^a,a>$, if $d$ wasn't the left tile then we can't apply $<q_c^a\times d,p,f,d>$.
+
+We already create one tile for each element of $\sum\cup \{b,\$\}$, 2 tiles for each $\downarrow$ transition, 2 tiles for each $\rightarrow$ transition, and $2 * |\sum\cup \{b,\$\}| + 1$ tiles for each $\leftarrow$ transition.
+Moreover we also have at most create : $|\sum\cup \{b,\$\}| + |Q|*|Q| + |\sum\cup \{b,\$\}| * |Q| + |\sum\cup \{b,\$\}|^2 * |Q| + |\sum\cup \{b,\$\}|^3 * |Q|$ different colors.
+\\Both of those values are polynomial.
+
+We now have have to constrain the first row thanks to $t_0$ to be $\epsilon q_0 \$ b ....b$ in order so we introduce a special color $i$ only use on the first row and special tiles: $t_0 = <\$,q_0,i,i>$ , $<i,\$,\$,i>$ ,and $<i,b,i,i>$.
+Here we have a bit of loose in generality because i can't find a way to deal with a set of possible initial states. however we can always add multiple $\epsilon$ transition (ie. which doesn't change the tape) from  $q_0$ to the other member of the initial set. 
+
+
+As a formal proof will take too long, i will try to convince you.
+
+
+If $M$ have a compution of length $B$ on  $\epsilon$.
+Consider such computation $r$, as we can add as many column on the first row of the tilling we add $B-1$ tile of $b$, then we can respect the computation $r$ to choose the tilling. It is always possible as we build the set of tile $T$ in order to. We can do so $B$ times resulting in $B+1 \times B+1$ tilling. It 's important to notice that we won't need more $b$ than $B$ cause as the computation is bound by $B$ there is at most $B$ $\rightarrow$ transition.
+
+Considere there is no computation of lenght $B$ on $\epsilon$.
+Suppose there exists a $B+1 \times B+1$ tilling with the $T$,
+Then inductivly we can prove that each row of the tilling can represent a state of the machine. (Indeed it's clear for the first one as $t_0$ and $i$ insure it, and as to put a till above the head we have to respect condition on $\delta$ it also true for the row above)
+Then if we are able to tile $B$ row that mean that is able to perform $B-1$ steps.
+Moreover, as we didn't add any tile for $q_{loose}$ if we are able to tile the last row then, the last row contain a tile representing $accept$ or $reject$.
+(If we didn't tweak the machine $M$ beforehand any computation longer then $B$ which induce a valid tilling)
+Hence the run represent by the row is a valid run for $M$ of lenght $B$ which computs $\epsilon$ (as the first row has to be of form $q_0\$bbb...bb$).
+
+The building of $T$ can be performed in polynomial has, there is a polynomial number of tiles in $T$, and $N=B+1$ is compute linearly.
+
+As a conclusion the tilling problem is NP-Hard, hence it is NP-Complete.

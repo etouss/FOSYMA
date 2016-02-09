@@ -1,0 +1,84 @@
+\section{Disclaimer}
+For the whole assignment i confused the order in the tilling, in the definition, you wrote:
+\\$t = <left,bot,right,top>$
+
+I did a mistake and used the convention:
+\\$t = <right,top,left,bot>$
+
+I also assumed that having a compution of length $B$ meant having a terminating run of length $B$ whether is was accepting or rejecting one.
+ 
+\section{Exercice 1}
+The  acceptance problem in polynomial time nondeterministicTuring machines can be formalize this way.
+\\Input : 
+\\ An NTM Machine $M$, an integer $n$ and a polynomial function $p$.
+\\Question :
+\\ Does there exist a run on $M$ accepting $n$ in less or equal than $p(n)$ steps.
+
+\subsection{The machine and B}
+
+Suppose $M = <Q,\delta,Q_0,\sum>$. 
+\\We will write $accept$ and $reject$ the special states of $M$, $ACCEPT$ and $REJECT$ the special states of $M_1$
+
+Let $M_1 = <\{Q\cup \{ accept,reject\}\times  \llbracket 0;p(n) \rrbracket\} \cup \{(reject,p(n)+1)\}, \delta',\{(q_0,0) | q_0 \in Q_0\},\sum>$
+
+$\forall (q,i) \in \{Q \times  \llbracket 0;p(n)-1 \rrbracket\}$:
+\\$\delta'((q,i),u) = \{((p,i+1),v,arrow)|\exists (p,v,arrow)\in \delta(q,u)\} $
+
+$\forall (q,i) \in \{Q\times \{p(n)\}\}$
+\\$\delta'((q,i),u) = ((reject,p(n)+1),u,\downarrow)$
+
+$\forall i \in \llbracket 0;p(n)-1 \rrbracket$
+\\$\delta'((accept,i),u) = ((accept,i+1),u,\downarrow)$
+
+$\forall i \in \llbracket 0;p(n) \rrbracket$
+\\$\delta'((reject,i),u) = ((reject,i+1),u,\downarrow)$
+
+$\forall u$
+\\$\delta((accept,p(n)),u) = (ACCEPT,u,\downarrow)$
+
+$\forall u$
+\\$\delta((reject,p(n)+1,u) = (REJECT,u,\downarrow)$
+
+Let consider a machine $M_2$ which ignore is input, copy $n$ on his band and then execute $M_1$. 
+
+Intuitivly we built a non deterministic machine $M_2$ which will simulate $<M,n>$ but will at best stop on an accepting exectution after $B$ steps and to avoid any rejected computation of length $B$ it will REJECT after $B+1$ steps where $B = p(n) + l(n) +1$ if we consider the copy of $n$ on the band take $l(n)$ steps.
+
+So $B = p(n) + l(n) +1$.
+
+\subsection{If and only if}
+
+Let's show that if $M_2$ computes $\epsilon$ in $B$ steps then there exists a run on $M$ accepting $n$ in less or equal than $p(n)$ steps.
+
+Let's consider a run $r$ such that $M_2$ computes $\epsilon$ in $B$ steps. 
+
+First let's show $r$ reachs $ACCEPT$.
+\\By absurd, let 's suppose $r$ reachs $REJECT$, then by definition of the machine it had to reach $(reject,p(n)+1)$ on the previous step. As each step of the machine increment the second argument, the run has done $p(n)+2$ steps from $(q_0,0)$ to $REJECT$. It also has done the $l(n)$ steps required to copy the data. So it has $p(n)+2+l(n)$ steps and $p(n)+2+l(n) \neq B$
+
+As $r$ reachs $ACCEPT$ state it had to reached $(accept,p(n))$ before. Let's call $i$ the minimal value where $\exists t | state(r(i)) = (accept,t)$
+Considere the restrition of $r$ call $r'= r(\llbracket l(n) ; i \rrbracket)$
+First such a restriction exists because $i>l(n)$ by construction of the machine.
+\\Then $r'$ is an accepting run for $<M,n>$ and $|r'| \leq p(n)$
+
+Clearly $|r'| \leq p(n)$ as  $|r'| \leq B - l(n) -1$.
+\\Moreover $\forall j \leq |r'|$ if   $r(j) = (w',(q,j),aw)$ and  $r(j+1) = (w' b,(p,j+1),w)$ then there exists $((p,j+1),b,\rightarrow) \in \delta'((q,j),a)$. Hence by construction of $\delta'((q,j),a)$ there exists $(p,b,\rightarrow) \in \delta(q,a)$
+\\Same can be said for $\{\leftarrow, \downarrow \}$.
+
+Let's show that if there exists a run $r$ on $M$ that accept $n$ in less or equal than $p(n)$ steps then there exists a run that compute $\epsilon$ on $M_2$ in $B$ steps. 
+
+Let's consider $r'$ a run on $M_2$ the first $l(n)$ steps being trivial let's ignore them.
+
+Let's build $r'$ such that $\forall j \leq |r| $ if $r(j) = (w,p,v)$ then $r'(j+l(n)) = (w,(p,j),v)$
+\\Such construction is possible because if $r(0) = (\epsilon,q_0,v) $ then $q_0\in Q_0$ so $(q_0,0) \in Q_0 \times \{0\}$ hence $r'(l(n)) =  (\epsilon,(q_0,0),v)$ is a valid state of the machine $M_2$.
+\\If $r(j) = (w,q,av)$ and  $r(j+1) = (w,p,bv)$ and $r'(j+l(n)) = (w,(q,j),av)$ is a valid state of the machine $M_2$ Then $r'(j+l(n)+1) = (w,(p,j+1),bv)$ is also a valid state.
+Indeed if $r(j+1) = (w,p,bv)$ and $r'(j+l(n)) = (w,(q,j),av)$ then $(p,b,\downarrow) \in \delta(q,a)$ so by construction of $\delta'$, $((p,j+1),b,\downarrow) \in \delta((q,j),a)$,
+hence $r'(j+l(n)+1) = (w,(p,j+1),bv)$ is a valid state. 
+(Same can be said for $\{\leftarrow, \rightarrow \}$).
+\\Moreover as $r(|r|-1) = (w,accepte,v)$, $r'(l(n)+|r|-1) = (w,(accept,|r|-1),v)$
+
+$\forall j \geq|r|+l(n) \land \j \leq p(n) +l(n) $
+\\$r'(j) = (w,(accept,j-l(n)),v) $ easy by construction of $M_2$ which only incremente when on $accept$
+\\Finally as $r'(p(n) +l(n)) = (w,(accept,p(n)),v) $, $r'(p(n) +l(n) +1) = (w,ACCEPT,v)$, hence $M_2$ computes $\epsilon$ in $B = p(n) + l(n) +1$ steps on $r'$.
+
+\subsection{Remarks}
+
+As $p(n)$ is finite there is only a finite set of states and  transitions in $M_2$ moreover $l(n)$ only depend on $n$ and can be easily calculate if we build the machine which copy input. Moreover the construction of $M_2$ and $B$ knowing $M$, $n$ and $p$ is clearly in polynomial time as we have to build $(p(n)+2) * Q$ states and $p(n)$ transition for each transition of $M$.

@@ -1,0 +1,12 @@
+\select@language {french}
+\contentsline {section}{\numberline {1}Pr\IeC {\'e}sentation d'un mod\IeC {\`e}le tas de sable}{2}{section.1}
+\contentsline {section}{\numberline {2}Une premi\IeC {\`e}re preuve de terminaison (par une mesure)[Thomas,Remy]}{3}{section.2}
+\contentsline {section}{\numberline {3}Une deuxi\IeC {\`e}me preuve de terminaison (par une mesure euclidienne)[Mathieu,Etienne]}{9}{section.3}
+\contentsline {section}{\numberline {4}Une troisi\IeC {\`e}me preuve de terminaison (par l'absurde)[Hugo]}{10}{section.4}
+\contentsline {section}{\numberline {5}Unicit\IeC {\'e} de la grille finale et des cases effondr\IeC {\'e}es [Florent]}{11}{section.5}
+\contentsline {section}{\numberline {6}Preuve[Hugo]}{15}{section.6}
+\contentsline {subsection}{\numberline {6.1}Terminaison de la r\IeC {\`e}gle d'effondrement dans le cas d'un tas de sable infini a nombre de grains de sable fini [Section 7 alternative][Thomas,Hugo]}{16}{subsection.6.1}
+\contentsline {section}{\numberline {7}G\IeC {\'e}n\IeC {\'e}ralisation \IeC {\`a} des graphes finis}{17}{section.7}
+\contentsline {section}{\numberline {8}G\IeC {\'e}n\IeC {\'e}ralisation \IeC {\`a} des graphes infinis}{18}{section.8}
+\contentsline {section}{\numberline {9}Probl\IeC {\`e}me du tas simple}{19}{section.9}
+\contentsline {subsection}{\numberline {9.1}Complexit\IeC {\'e} du probl\IeC {\`e}me}{19}{subsection.9.1}
