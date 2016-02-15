@@ -107,7 +107,6 @@ public class Noeud implements Serializable{
 	
 	public Noeud ticked_send_unique(ArrayList<Noeud> result, int tick){
 		if(this.tick > tick){
-			stamp = 1;
 			/*je m'envoie*/
 			Noeud me = new Noeud(this.id,this.graph,this.tick);
 			for(Noeud n : this.fils){
@@ -116,7 +115,6 @@ public class Noeud implements Serializable{
 		return me;
 		}
 		else{
-			stamp = -1;
 			ticked_send_multiple(result,tick);
 		}
 		return null;
