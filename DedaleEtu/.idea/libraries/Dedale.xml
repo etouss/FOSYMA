@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Dedale">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/src/main/resources/Dedale.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/src/main/resources/Dedale.jar!/doc" />
+    </JAVADOC>
+    <SOURCES />
+  </library>
+</component>
