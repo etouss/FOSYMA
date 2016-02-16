@@ -6,7 +6,7 @@ import java.util.Random;
 
 import env.Attribute;
 
-import env.Environment.Couple;
+import env.Couple;
 
 import jade.core.behaviours.TickerBehaviour;
 import mas.agents.DummyExploAgent;
@@ -127,6 +127,7 @@ public class RandomWalkBehaviour extends TickerBehaviour{
 			}
 
 			//The move action (if any) should be the last action of your behaviour
+			
 			((mas.abstractAgent)this.myAgent).moveTo(lobs.get(i).getLeft());
 		}
 

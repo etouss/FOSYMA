@@ -82,6 +82,14 @@ public class Noeud implements Serializable{
 		return id;
 	}
 	
+	public MyGraph getGraph(){
+		return graph;
+	}
+	
+	public int getTick(){
+		return tick;
+	}
+	
 	public boolean has_been_there(){
 		return been_there;
 	}
@@ -110,13 +118,15 @@ public class Noeud implements Serializable{
 			/*je m'envoie*/
 			Noeud me = new Noeud(this.id,this.graph,this.tick);
 			for(Noeud n : this.fils){
-				me.getFils().add(n.ticked_send_unique(result, tick));
+			//	if (n != pere)
+					me.getFils().add(n.ticked_send_unique(result ,tick));
 			}
 		return me;
 		}
-		else{
-			ticked_send_multiple(result,tick);
-		}
+		/* Sinon on fait rien non? Je m'embrouille */
+		//else{
+			//ticked_send_multiple(result,tick);
+		//}
 		return null;
 	}
 	
