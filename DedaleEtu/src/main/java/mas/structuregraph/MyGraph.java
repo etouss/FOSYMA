@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.SingleGraph;
-import org.graphstream.ui.swingViewer.Viewer;
+
 
 import mas.abstractAgent;
 
@@ -74,18 +74,23 @@ public class MyGraph {
 	
 	public void synchro(List<Noeud> nodes,int tick){
 		/*Ne pas oublier de remettre les boolean synchro a 0*/
+		
 		for(Noeud node : nodes){
-			Noeud my_node = null;
-			try {
-				my_node = return_node(node.getId());
-			} catch (Node_not_known_Exeption e) {
-				my_node = new Noeud(node.getId(),this,tick);
-				add_node(node);
+			if (node != null){
+				Noeud my_node = null;
+				try {
+					my_node = return_node(node.getId());
+				} catch (Node_not_known_Exeption e) {
+					my_node = new Noeud(node.getId(),this,tick);
+					add_node(node);
+				}
+				my_node.synchro(node,tick);
+			
+			update_scc();
 			}
-			my_node.synchro(node,tick);
 		}
-		update_scc();
 	}
+	
 	
 	public int hash_code(){
 		/*Utile pour vérifier que l'on est bien d'accord sur la map*/

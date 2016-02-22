@@ -5,9 +5,15 @@ import java.io.IOException;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.lang.acl.ACLMessage;
+
+import java.util.ArrayList;
+
 import mas.structuregraph.MyGraph;
 import mas.agents.DummyExploAgent;
+
+
 
 public class GiveGraphBehaviour extends TickerBehaviour{
 	/**
@@ -15,10 +21,12 @@ public class GiveGraphBehaviour extends TickerBehaviour{
 	 */
 	private static final long serialVersionUID = -2058134622078521998L;
 	private MyGraph graph;
+	private DFAgentDescription[] listeAgents;
 	
-	public GiveGraphBehaviour (final Agent myagent,MyGraph graph) {
+	public GiveGraphBehaviour (final Agent myagent,MyGraph graph, DFAgentDescription[] listeAgents) {
 		super(myagent, 500);
 		this.graph = graph;
+		this.listeAgents = listeAgents;
 		//super(myagent);
 	}
 
@@ -37,11 +45,11 @@ public class GiveGraphBehaviour extends TickerBehaviour{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		/*Autrement ca va pas du tout, Les annuaire ??!!*/
-		if (!myAgent.getLocalName().equals("Explo1")){
-			msg.addReceiver(new AID("Explo1",AID.ISLOCALNAME));
-		}else{
-			msg.addReceiver(new AID("Explo2",AID.ISLOCALNAME));
+		
+		
+		for ( DFAgentDescription agent : listeAgents ){
+			if (!agent.equals(this.myAgent.getAID()))
+				msg.addReceiver(new AID(agent.toString(),AID.ISLOCALNAME));
 		}
 
 		((mas.abstractAgent)this.myAgent).sendMessage(msg);
