@@ -138,6 +138,9 @@ public class MyGraph {
 		for(Noeud source : sources){
 			result.add(source.ticked_send_unique(result,tick));
 		}
+		for(Noeud source : sources){
+			source.raz_propagate();
+		}
 		return result;
 	}
 	

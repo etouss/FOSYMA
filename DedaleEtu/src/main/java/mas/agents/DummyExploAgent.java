@@ -1,9 +1,13 @@
 package mas.agents;
 
 
+import java.util.HashSet;
+import java.util.LinkedList;
+
 import env.Environment;
 import mas.abstractAgent;
 import mas.behaviours.*;
+import mas.utility.*;
 import mas.structuregraph.MyGraph;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
@@ -23,6 +27,7 @@ public class DummyExploAgent extends abstractAgent{
 	private static final long serialVersionUID = -1784844593772918359L;
 	private MyGraph graph;
 	private int timestamp= 0;
+	private boolean done = false;
 
 
 
@@ -54,35 +59,52 @@ public class DummyExploAgent extends abstractAgent{
 		dfd.setName(getAID()); 
 		ServiceDescription sd = new ServiceDescription();
 		sd.setType( "explorer" ); 
-		sd.setName(getLocalName() );
+		sd.setName(getLocalName());
 		dfd.addServices(sd);
 		try {
-		DFService.register(this, dfd );
-		} catch (FIPAException fe) { fe.printStackTrace(); }
+			DFService.register(this, dfd );
+		} catch (FIPAException fe) 
+			{
+			fe.printStackTrace(); 
+		}
 		
 
 		
 		//Add the behaviours
 		this.graph = new MyGraph(this);
 		this.graph.display();
-		addBehaviour(new RandomWalkBehaviour(this,graph));
 		//addBehaviour(new SayHello(this));
-		sd.setType( "explorer" ); 
-		dfd.addServices(sd);
+		//sd.setType( "explorer" ); 
+		//dfd.addServices(sd);
+		
+		ServiceDescription sdsearch = new ServiceDescription();
+		sdsearch.setType( "explorer" ); 
+		DFAgentDescription dfdsearch = new DFAgentDescription();
+		dfdsearch.addServices(sdsearch);
+		
 		DFAgentDescription[] result = null;
 		try {
-			result = DFService.search(this, dfd);
+			Thread.sleep(1000);
+			result = DFService.search(this, dfdsearch);
 		} catch (FIPAException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		System.out.println(result.length + " results" );
-		if (result.length>0)
-		System.out.println(" " + result[0].getName() );
-		
-		
-		addBehaviour(new GiveGraphBehaviour(this,graph, result));
+		if (result.length>0){
+			for(DFAgentDescription a : result){
+				System.out.println(" " + a.getName()+ "\n" );
+			}
+		}
+		HashSet<TupleAidTick> ll = new HashSet<TupleAidTick>();
+		addBehaviour(new SayThereGraphBehaviour(this, result));
+		addBehaviour(new ReceiveThereBehaviour(this,ll));
+		addBehaviour(new GiveGraphBehaviour(this,graph, ll));
 		addBehaviour(new ReceiveGraphBehaviour(this,graph));
+		addBehaviour(new RandomWalkBehaviour(this,graph));
 
 		System.out.println("the agent "+this.getLocalName()+ " is started");
 

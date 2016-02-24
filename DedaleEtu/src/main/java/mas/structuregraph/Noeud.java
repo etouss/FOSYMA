@@ -16,7 +16,7 @@ public class Noeud implements Serializable{
 	private transient int tick; 
 	private boolean been_there;
 	private transient boolean synchroniser;
-	private transient int stamp;
+	private transient boolean stamp;
 	private transient MyGraph graph;
 	
 	public Noeud(String id,MyGraph graph,int tick){
@@ -114,20 +114,36 @@ public class Noeud implements Serializable{
 	}
 	
 	public Noeud ticked_send_unique(ArrayList<Noeud> result, int tick){
+		if(!stamp) return null;
+		stamp = !stamp;
 		if(this.tick > tick){
 			/*je m'envoie*/
 			Noeud me = new Noeud(this.id,this.graph,this.tick);
 			for(Noeud n : this.fils){
-			//	if (n != pere)
 					me.getFils().add(n.ticked_send_unique(result ,tick));
 			}
 		return me;
 		}
 		/* Sinon on fait rien non? Je m'embrouille */
-		//else{
-			//ticked_send_multiple(result,tick);
-		//}
-		return null;
+		else{
+			ticked_send_multiple(result,tick);
+			return null;
+		}
+	
+	}
+	
+	public void raz_propagate(){
+		if(!synchroniser && !stamp){
+			return;
+		}
+		raz();
+		for(Noeud n : fils){
+			n.raz_propagate();
+		}
+	}
+	public void raz(){
+		this.synchroniser = false;
+		this.stamp  = false;
 	}
 	
 	/*Methode 2*/
