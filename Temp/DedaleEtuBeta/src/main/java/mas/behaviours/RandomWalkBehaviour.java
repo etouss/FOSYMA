@@ -102,8 +102,10 @@ public class RandomWalkBehaviour extends TickerBehaviour{
 				List<Couple<String,List<Attribute>>> lobs2=((mas.abstractAgent)this.myAgent).observe();//myPosition
 				System.out.println("lobs after picking "+lobs2);
 			}
-
-			int i = 0;
+			
+			
+			int i = r.nextInt(lobs.size());
+			/*
 			boolean ok = false;
 			for(i = 0;i<lobs.size();i++){
 				if(!castle.is_visited(lobs.get(i).getLeft())){
@@ -115,11 +117,13 @@ public class RandomWalkBehaviour extends TickerBehaviour{
 			if(!ok){
 				i=r.nextInt(lobs.size());
 			}
-
+			*/
 			//The move action (if any) should be the last action of your behaviour
 			
-			while(!((mas.abstractAgent)this.myAgent).moveTo(lobs.get(i).getLeft())){
+			if(!((mas.abstractAgent)this.myAgent).moveTo(castle.where_to_to(myPosition))){
+				while(!((mas.abstractAgent)this.myAgent).moveTo(lobs.get(i).getLeft())){
 				i=r.nextInt(lobs.size());
+				}
 			}
 		}
 

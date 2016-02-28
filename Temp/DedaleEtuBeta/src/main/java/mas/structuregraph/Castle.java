@@ -6,6 +6,7 @@ import java.util.HashSet;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.SingleGraph;
 
+import java.util.LinkedList;
 import mas.agents.DummyExploAgent;
 
 public class Castle {
@@ -103,5 +104,20 @@ public class Castle {
 			any_room.raz();
 		}
 	}
+	
+	public String where_to_to(String position){
+		float max_reward = 0;
+		String result = "";
+		Room there = this.get_room(position, -1);
+		for(Room r_linked : there.getLinkedRooms()){
+			float reward = r_linked.reward();
+			if(reward > max_reward){
+				max_reward = reward;
+				result = r_linked.getId();
+			}
+		}	
+		return result;
+	}
+	
 	
 }

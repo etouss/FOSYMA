@@ -2,6 +2,7 @@ package mas.structuregraph;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.LinkedList;
 
 public class Room implements Serializable {
 	/*Serial ID*/
@@ -19,6 +20,7 @@ public class Room implements Serializable {
 	private int treasure_value = -1;
 	/*Linked Room*/
 	private HashSet<Room> linked_rooms = new HashSet<Room>();
+	
 	
 	
 	/*Stuff that doesn't go through network*/
@@ -101,10 +103,38 @@ public class Room implements Serializable {
 			linked_room.update_room(network_linked_room,when_receive);
 		}
 	}
+
 	
 	public void raz(){
 		this.updated = false;
 	}
 	
+	public float reward(){
+		HashSet<Room> already_visited = new HashSet<Room>();
+		already_visited.add(this);
+		LinkedList<Room> room_to_check = new LinkedList<Room>();
+		LinkedList<Integer> step_to_go = new LinkedList<Integer>();
+		float result = isVisited()?0:1;
+		for(Room r_linked : linked_rooms){
+			result += r_linked.isVisited()?0:(1.0/(1*linked_rooms.size()));
+			room_to_check.add(r_linked);
+			step_to_go.add(1);
+			already_visited.add(r_linked);
+		}
+		while(!room_to_check.isEmpty()){
+			Room to_do = room_to_check.removeFirst();
+			int step = step_to_go.removeFirst();
+			for(Room r_linked : to_do.getLinkedRooms()){
+				if(!already_visited.contains(r_linked)){
+					result += r_linked.isVisited()?0:(1.0/((step+1)*to_do.getLinkedRooms().size()));
+					room_to_check.add(r_linked);
+					step_to_go.add(step+1);
+					already_visited.add(r_linked);
+				}
+			}
+		}
+		System.out.println(result);
+		return result;
+	}
 
 }
