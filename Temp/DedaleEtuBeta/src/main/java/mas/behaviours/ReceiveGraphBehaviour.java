@@ -39,7 +39,7 @@ public class ReceiveGraphBehaviour extends TickerBehaviour{
 
 		final ACLMessage msg = this.myAgent.receive(msgTemplate);
 		if (msg != null) {		
-			System.out.println("\n" +myAgent.getLocalName()+"<----Graph received from "+msg.getSender().getLocalName());
+			//System.out.println("\n" +myAgent.getLocalName()+"<----Graph received from "+msg.getSender().getLocalName());
 			//System.out.println("\n Agent "+this.myAgent.getLocalName()+ " prior his graph: "+graph.toString());
 			//this.finished=true;
 			try {

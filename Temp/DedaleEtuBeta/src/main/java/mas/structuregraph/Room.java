@@ -63,6 +63,7 @@ public class Room implements Serializable {
 			this.when = when;
 			page_ranking -= 1;
 			prev_page_ranking -= 1;
+			castle.setVisited(this);
 			return true;
 		}
 		return false;
@@ -118,7 +119,7 @@ public class Room implements Serializable {
 		for(Room network_linked_room :network_room.getLinkedRooms()){
 			Room linked_room = castle.get_room(network_linked_room.getId(),when_receive);
 			castle.add_link(this, linked_room,when_receive);
-			page_rank_reset_needed = linked_room.update_room(network_linked_room,when_receive) || page_rank_reset_needed;
+			page_rank_reset_needed = linked_room.update_room(network_linked_room,when_receive) | page_rank_reset_needed;
 		}
 		return page_rank_reset_needed;
 	}
@@ -128,31 +129,44 @@ public class Room implements Serializable {
 		this.updated = false;
 	}
 	
-	public float reward(){
+	public double get_reward(double nb_unvisited,int step){
+		/*prop au truc inexploré*/
+		return nb_unvisited/((step+1)*this.getLinkedRooms().size());
+	}
+	
+	public double reward(HashSet<Room> occupied){
 		HashSet<Room> already_visited = new HashSet<Room>();
 		already_visited.add(this);
 		LinkedList<Room> room_to_check = new LinkedList<Room>();
 		LinkedList<Integer> step_to_go = new LinkedList<Integer>();
-		float result = isVisited()?0:1;
+		double result = isVisited()?0:1;
+		double nb_unvisited_1 = 0;
 		for(Room r_linked : linked_rooms){
-			result += r_linked.isVisited()?0:(1.0/(1*linked_rooms.size()));
+			if(occupied.contains(r_linked)) continue;
+			nb_unvisited_1 += r_linked.isVisited()?0:1;
+			//result += r_linked.isVisited()?0:(1.0/(1*linked_rooms.size()));
 			room_to_check.add(r_linked);
 			step_to_go.add(1);
 			already_visited.add(r_linked);
 		}
+		result += this.get_reward(nb_unvisited_1,0);
 		while(!room_to_check.isEmpty()){
 			Room to_do = room_to_check.removeFirst();
 			int step = step_to_go.removeFirst();
+			double nb_unvisited = 0;
 			for(Room r_linked : to_do.getLinkedRooms()){
+				//if(occupied.contains(r_linked)) continue;
 				if(!already_visited.contains(r_linked)){
-					result += r_linked.isVisited()?0:(1.0/((step+1)*to_do.getLinkedRooms().size()));
+					nb_unvisited += r_linked.isVisited()?0:!occupied.contains(r_linked)?1.0:0.2;
+					//result += r_linked.isVisited()?0:(1.0/((step+1)*to_do.getLinkedRooms().size()));
 					room_to_check.add(r_linked);
 					step_to_go.add(step+1);
 					already_visited.add(r_linked);
 				}
 			}
+			result += to_do.get_reward(nb_unvisited, step);
 		}
-		System.out.println(result);
+		//System.out.println(result);
 		return result;
 	}
 

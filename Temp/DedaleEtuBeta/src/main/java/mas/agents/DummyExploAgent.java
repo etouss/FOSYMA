@@ -73,7 +73,9 @@ public class DummyExploAgent extends abstractAgent{
 
 		
 		//Add the behaviours
-		this.castle = new Castle(this);
+		HashMap<AID,String> agents_position = new HashMap<AID,String>();
+		HashMap<AID,Integer> agents_position_probability = new HashMap<AID,Integer>();
+		this.castle = new Castle(this,agents_position,agents_position_probability);
 		//this.graph.display();
 		//addBehaviour(new SayHello(this));
 		//sd.setType( "explorer" ); 
@@ -106,11 +108,11 @@ public class DummyExploAgent extends abstractAgent{
 		HashMap<AID,Integer> hmsend = new HashMap<AID,Integer>();
 		HashMap<AID,Integer> hmack = new HashMap<AID,Integer>();
 		addBehaviour(new SayThereGraphBehaviour(this, result));
-		addBehaviour(new ReceiveThereBehaviour(this,lsend));
+		addBehaviour(new ReceiveThereBehaviour(this,lsend,agents_position,agents_position_probability));
 		addBehaviour(new GiveGraphBehaviour(this,castle, lsend,hmsend,hmack));
 		addBehaviour(new ReceiveGraphBehaviour(this,castle,lack));
 		addBehaviour(new SayAckGraphBehaviour(this,lack));
-		addBehaviour(new ReceiveAckBehaviour(this,hmsend,hmack));
+		addBehaviour(new ReceiveAckBehaviour(this,hmsend,hmack,agents_position,agents_position_probability));
 		addBehaviour(new RandomWalkBehaviour(this,castle));
 
 		System.out.println("the agent "+this.getLocalName()+ " is started");

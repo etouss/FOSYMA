@@ -1,0 +1,7 @@
+mapname:mapName
+treasure:nodeId:value
+treasure:nodeId:value
+treasure:nodeId:value
+agent:agentName:nodeId:BackPackCapacity
+agent:agentName:nodeId:BackPackCapacity
+agent:agentName:nodeId:BackPackCapacity

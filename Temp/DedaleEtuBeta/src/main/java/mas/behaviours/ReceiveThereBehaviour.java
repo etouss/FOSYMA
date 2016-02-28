@@ -27,14 +27,16 @@ public class ReceiveThereBehaviour extends TickerBehaviour{
 	private static final long serialVersionUID = 9088209402507795289L;
 	//private Castle castle;
 	private HashSet<AID> lsend;
-	private HashMap<String,Room> agents_position;
-	private HashMap<String,Integer> agents_position_probability;
+	private HashMap<AID,String> agents_position;
+	private HashMap<AID,Integer> agents_position_probability;
 
 	private boolean finished=false;
 
-	public ReceiveThereBehaviour (final Agent myagent,HashSet<AID> lsend) {
+	public ReceiveThereBehaviour (final Agent myagent,HashSet<AID> lsend,HashMap<AID,String> agents_position,HashMap<AID,Integer> agents_position_probability) {
 		super(myagent, 200);
 		this.lsend = lsend;
+		this.agents_position = agents_position;
+		this.agents_position_probability = agents_position_probability;
 		//super(myagent);
 	}
 
@@ -49,7 +51,12 @@ public class ReceiveThereBehaviour extends TickerBehaviour{
 			if(msg.getContent().contains("GiveGraph!")){
 				//System.out.println(myAgent.getLocalName()+"<----Result received from "+msg.getSender().getLocalName()+" ,content= "+msg.getContent());
 				//int count = Integer.parseInt(msg.getContent());
+				int when = ((DummyExploAgent)this.myAgent).getWhen();
 				lsend.add(msg.getSender());
+				agents_position.remove(msg.getSender());
+				agents_position_probability.remove(msg.getSender());
+				agents_position.put(msg.getSender(),msg.getContent().split("::")[1]);
+				agents_position_probability.put(msg.getSender(),when);
 			}
 		}else{
 			block();// the behaviour goes to sleep until the arrival of a new message in the agent's Inbox.

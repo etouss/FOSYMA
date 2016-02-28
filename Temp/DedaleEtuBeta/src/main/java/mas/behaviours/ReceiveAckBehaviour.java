@@ -28,15 +28,17 @@ public class ReceiveAckBehaviour extends TickerBehaviour{
 	//private Castle castle;
 	private HashMap<AID,Integer> hmsend;
 	private HashMap<AID,Integer> hmack;
-	private HashMap<String,Room> agents_position;
-	private HashMap<String,Integer> agents_position_probability;
+	private HashMap<AID,String> agents_position;
+	private HashMap<AID,Integer> agents_position_probability;
 
 	private boolean finished=false;
 
-	public ReceiveAckBehaviour (final Agent myagent,HashMap<AID,Integer> hmsend,HashMap<AID,Integer> hmack) {
+	public ReceiveAckBehaviour (final Agent myagent,HashMap<AID,Integer> hmsend,HashMap<AID,Integer> hmack,HashMap<AID,String> agents_position,HashMap<AID,Integer> agents_position_probability) {
 		super(myagent, 200);
 		this.hmsend = hmsend;
 		this.hmack = hmack;
+		this.agents_position = agents_position;
+		this.agents_position_probability = agents_position_probability;
 		//super(myagent);
 	}
 
@@ -51,8 +53,13 @@ public class ReceiveAckBehaviour extends TickerBehaviour{
 			if(msg.getContent().contains("AckGraph!")){
 				//System.out.println(myAgent.getLocalName()+"<----Result received from "+msg.getSender().getLocalName()+" ,content= "+msg.getContent());
 				//int count = Integer.parseInt(msg.getContent());
+				int when = ((DummyExploAgent)this.myAgent).getWhen();
 				hmack.remove(msg.getSender());
 				hmack.put(msg.getSender(),hmsend.get(msg.getSender()));
+				agents_position.remove(msg.getSender());
+				agents_position_probability.remove(msg.getSender());
+				agents_position.put(msg.getSender(),msg.getContent().split("::")[1]);
+				agents_position_probability.put(msg.getSender(),when);
 			}
 		}else{
 			block();// the behaviour goes to sleep until the arrival of a new message in the agent's Inbox.

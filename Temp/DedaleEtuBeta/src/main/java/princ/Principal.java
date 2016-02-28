@@ -32,9 +32,10 @@ public class Principal {
 	private static Environment env;// static ref of the real environment
 
 	public static void main(String[] args){
-
+		
 		//0) Create the real environment and the observed one
-		env = new Environment(ENVtype.DOROGOVTSEV,500,null);
+		//env = new Environment(ENVtype.DOROGOVTSEV,130,null);
+		env = new Environment("src/main/resources/map2015","src/main/resources/map2015-config");
 		//env= new Environment(ENVtype.DOROGOVTSEV,15,null);
 
 		
@@ -229,7 +230,7 @@ public class Principal {
 		c = containerList.get("container0");
 		agentName="Explo1";
 		try {
-
+			
 			Object[] objtab=new Object[]{env};//used to give informations to the agent
 			AgentController	ag=c.createNewAgent(agentName,DummyExploAgent.class.getName(),objtab);
 			agentList.add(ag);
@@ -240,6 +241,7 @@ public class Principal {
 		}
 //
 ////
+		
 		c = containerList.get("container0");
 		agentName="Explo2";
 		try {
@@ -282,6 +284,122 @@ public class Principal {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		c = containerList.get("container0");
+		agentName="Explo5";
+		try {
+
+
+			Object[] objtab=new Object[]{env};//used to give informations to the agent
+			AgentController	ag=c.createNewAgent(agentName,DummyExploAgent.class.getName(),objtab);
+			agentList.add(ag);
+			System.out.println(agentName+" launched");
+		} catch (StaleProxyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		c = containerList.get("container0");
+		agentName="Explo6";
+		try {
+
+
+			Object[] objtab=new Object[]{env};//used to give informations to the agent
+			AgentController	ag=c.createNewAgent(agentName,DummyExploAgent.class.getName(),objtab);
+			agentList.add(ag);
+			System.out.println(agentName+" launched");
+		} catch (StaleProxyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		/*
+		c = containerList.get("container0");
+		agentName="Explo7";
+		try {
+			
+			Object[] objtab=new Object[]{env};//used to give informations to the agent
+			AgentController	ag=c.createNewAgent(agentName,DummyExploAgent.class.getName(),objtab);
+			agentList.add(ag);
+			System.out.println(agentName+" launched");
+		} catch (StaleProxyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+//
+////
+		
+		c = containerList.get("container0");
+		agentName="Explo8";
+		try {
+
+
+			Object[] objtab=new Object[]{env};//used to give informations to the agent
+			AgentController	ag=c.createNewAgent(agentName,DummyExploAgent.class.getName(),objtab);
+			agentList.add(ag);
+			System.out.println(agentName+" launched");
+		} catch (StaleProxyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		c = containerList.get("container0");
+		agentName="Explo9";
+		try {
+
+
+			Object[] objtab=new Object[]{env};//used to give informations to the agent
+			AgentController	ag=c.createNewAgent(agentName,DummyExploAgent.class.getName(),objtab);
+			agentList.add(ag);
+			System.out.println(agentName+" launched");
+		} catch (StaleProxyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		c = containerList.get("container0");
+		agentName="Explo10";
+		try {
+
+
+			Object[] objtab=new Object[]{env};//used to give informations to the agent
+			AgentController	ag=c.createNewAgent(agentName,DummyExploAgent.class.getName(),objtab);
+			agentList.add(ag);
+			System.out.println(agentName+" launched");
+		} catch (StaleProxyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		c = containerList.get("container0");
+		agentName="Explo11";
+		try {
+
+
+			Object[] objtab=new Object[]{env};//used to give informations to the agent
+			AgentController	ag=c.createNewAgent(agentName,DummyExploAgent.class.getName(),objtab);
+			agentList.add(ag);
+			System.out.println(agentName+" launched");
+		} catch (StaleProxyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		c = containerList.get("container0");
+		agentName="Explo12";
+		try {
+
+
+			Object[] objtab=new Object[]{env};//used to give informations to the agent
+			AgentController	ag=c.createNewAgent(agentName,DummyExploAgent.class.getName(),objtab);
+			agentList.add(ag);
+			System.out.println(agentName+" launched");
+		} catch (StaleProxyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+		
+		
 
 		
 		System.out.println("Agents launched...");

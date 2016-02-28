@@ -30,6 +30,7 @@ public class RandomWalkBehaviour extends TickerBehaviour{
 	private static final long serialVersionUID = 9088209402507795289L;
 	private Castle castle;
 	private Random r= new Random();
+	private int count = 0;
 
 	public RandomWalkBehaviour (final mas.abstractAgent myagent,Castle castle) {
 		super(myagent, 500);
@@ -41,10 +42,6 @@ public class RandomWalkBehaviour extends TickerBehaviour{
 	@Override
 	public void onTick() {
 		
-		if(castle.is_done_visited()){
-			System.out.println(myAgent.getLocalName()+" is done !!");
-			return;
-		}
 		((DummyExploAgent)this.myAgent).incWhen();
 		int when = ((DummyExploAgent)this.myAgent).getWhen();
 		
@@ -63,8 +60,9 @@ public class RandomWalkBehaviour extends TickerBehaviour{
 				Room linked_room = castle.get_room(couple.getLeft(),when);
 				castle.add_link(self,linked_room,when);
 			}
-			if(self.setVisited(when))
-				castle.page_ranking_reset();
+			self.setVisited(when);
+			//if(self.setVisited(when))
+			//	castle.page_ranking_reset();
 
 			//Little pause to allow you to follow what is going on
 			/*
@@ -105,7 +103,6 @@ public class RandomWalkBehaviour extends TickerBehaviour{
 			}
 			
 			
-			int i = r.nextInt(lobs.size());
 			/*
 			boolean ok = false;
 			for(i = 0;i<lobs.size();i++){
@@ -121,11 +118,24 @@ public class RandomWalkBehaviour extends TickerBehaviour{
 			*/
 			//The move action (if any) should be the last action of your behaviour
 			
-			if(!((mas.abstractAgent)this.myAgent).moveTo(castle.where_to_to(myPosition))){
+			//String where = castle.where_to_to_page(myPosition,when);
+			if(castle.is_done_visited()){
+				System.out.println(myAgent.getLocalName()+" is done !!" + count);
+				int i = r.nextInt(lobs.size());
 				while(!((mas.abstractAgent)this.myAgent).moveTo(lobs.get(i).getLeft())){
-				i=r.nextInt(lobs.size());
+					i=r.nextInt(lobs.size());
 				}
+				return;
 			}
+			count ++;
+			
+			if(((mas.abstractAgent)this.myAgent).moveTo(castle.where_to_to_heavy(myPosition,when))){
+				return;
+			}
+			System.out.println("Deg");
+			
+			/*
+			}*/
 		}
 
 	}
