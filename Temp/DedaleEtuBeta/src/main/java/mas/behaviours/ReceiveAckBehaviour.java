@@ -18,6 +18,7 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import mas.agents.DummyExploAgent;
+import mas.structuregraph.Room;
 
 
 
@@ -27,6 +28,8 @@ public class ReceiveAckBehaviour extends TickerBehaviour{
 	//private Castle castle;
 	private HashMap<AID,Integer> hmsend;
 	private HashMap<AID,Integer> hmack;
+	private HashMap<String,Room> agents_position;
+	private HashMap<String,Integer> agents_position_probability;
 
 	private boolean finished=false;
 
@@ -45,7 +48,7 @@ public class ReceiveAckBehaviour extends TickerBehaviour{
 
 		final ACLMessage msg = this.myAgent.receive(msgTemplate);
 		if (msg != null) {		
-			if(msg.getContent().equals("AckGraph!")){
+			if(msg.getContent().contains("AckGraph!")){
 				//System.out.println(myAgent.getLocalName()+"<----Result received from "+msg.getSender().getLocalName()+" ,content= "+msg.getContent());
 				//int count = Integer.parseInt(msg.getContent());
 				hmack.remove(msg.getSender());

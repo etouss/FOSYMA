@@ -20,6 +20,7 @@ public class SayAckGraphBehaviour extends TickerBehaviour{
 	//private MyGraph graph;
 	private HashSet<AID> lack;
 	
+	
 	public SayAckGraphBehaviour (final Agent myagent, HashSet<AID> lack) {
 		super(myagent, 500);
 		//this.graph = graph;
@@ -32,9 +33,10 @@ public class SayAckGraphBehaviour extends TickerBehaviour{
 		//String myPosition=((mas.abstractAgent)this.myAgent).getCurrentPosition();
 		
 		for(AID aid : lack ){
+			String myPosition=((mas.abstractAgent)this.myAgent).getCurrentPosition();
 			ACLMessage msg=new ACLMessage(ACLMessage.CONFIRM);
 			msg.setSender(this.myAgent.getAID());
-			msg.setContent("AckGraph!");
+			msg.setContent("AckGraph! ::"+myPosition);
 		
 			msg.addReceiver(aid);
 			((mas.abstractAgent)this.myAgent).sendMessage(msg);

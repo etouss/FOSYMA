@@ -28,6 +28,19 @@ public class Room implements Serializable {
 	private transient Castle castle = null;
 	private transient boolean updated = false;
 	private transient int when = -1;
+	public transient float page_ranking = 1;
+	public transient float prev_page_ranking = 1;
+	
+	public void update_page_ranking(){
+		page_ranking = isVisited()?0:1;
+		for(Room r_linked : linked_rooms){
+			page_ranking += r_linked.prev_page_ranking / linked_rooms.size();
+		}
+		
+	}
+	public void equalize_page_ranking(){
+		prev_page_ranking = page_ranking;
+	}
 	
 	public void add_link(Room link_room,int when_called){
 		if(!this.linked_rooms.contains(link_room)){
@@ -44,11 +57,15 @@ public class Room implements Serializable {
 		return this.visited;
 	}
 	
-	public void setVisited(int when){
+	public boolean setVisited(int when){
 		if(!visited){
 			visited = true;
 			this.when = when;
-		}	
+			page_ranking -= 1;
+			prev_page_ranking -= 1;
+			return true;
+		}
+		return false;
 	}
 	
 	public HashSet<Room> getLinkedRooms(){
@@ -85,13 +102,14 @@ public class Room implements Serializable {
 		/*Copy the rest*/
 	}
 	
-	public void update_room(Room network_room,int when_receive){
+	public boolean update_room(Room network_room,int when_receive){
 		if(this.updated) 
-			return ;
+			return false;
 		this.updated = true;
 		/*Update this room*/
+		boolean page_rank_reset_needed = false;
 		if(network_room.isVisited() ){
-			this.setVisited(when_receive);
+			page_rank_reset_needed = this.setVisited(when_receive);
 		}
 		/*If new_info update this.when*/
 		
@@ -100,8 +118,9 @@ public class Room implements Serializable {
 		for(Room network_linked_room :network_room.getLinkedRooms()){
 			Room linked_room = castle.get_room(network_linked_room.getId(),when_receive);
 			castle.add_link(this, linked_room,when_receive);
-			linked_room.update_room(network_linked_room,when_receive);
+			page_rank_reset_needed = linked_room.update_room(network_linked_room,when_receive) || page_rank_reset_needed;
 		}
+		return page_rank_reset_needed;
 	}
 
 	

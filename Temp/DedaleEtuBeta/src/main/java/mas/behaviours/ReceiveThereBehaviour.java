@@ -2,6 +2,7 @@ package mas.behaviours;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,6 +18,7 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import mas.agents.DummyExploAgent;
+import mas.structuregraph.Room;
 
 
 
@@ -25,6 +27,8 @@ public class ReceiveThereBehaviour extends TickerBehaviour{
 	private static final long serialVersionUID = 9088209402507795289L;
 	//private Castle castle;
 	private HashSet<AID> lsend;
+	private HashMap<String,Room> agents_position;
+	private HashMap<String,Integer> agents_position_probability;
 
 	private boolean finished=false;
 
@@ -42,7 +46,7 @@ public class ReceiveThereBehaviour extends TickerBehaviour{
 
 		final ACLMessage msg = this.myAgent.receive(msgTemplate);
 		if (msg != null) {		
-			if(msg.getContent().equals("GiveGraph!")){
+			if(msg.getContent().contains("GiveGraph!")){
 				//System.out.println(myAgent.getLocalName()+"<----Result received from "+msg.getSender().getLocalName()+" ,content= "+msg.getContent());
 				//int count = Integer.parseInt(msg.getContent());
 				lsend.add(msg.getSender());

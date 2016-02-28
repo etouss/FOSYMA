@@ -26,10 +26,10 @@ public class SayThereGraphBehaviour extends TickerBehaviour{
 	@Override
 	public void onTick() {
 		//String myPosition=((mas.abstractAgent)this.myAgent).getCurrentPosition();
-
+		String myPosition=((mas.abstractAgent)this.myAgent).getCurrentPosition();
 		ACLMessage msg=new ACLMessage(ACLMessage.REQUEST);
 		msg.setSender(this.myAgent.getAID());
-		msg.setContent("GiveGraph!");
+		msg.setContent("GiveGraph! ::"+myPosition);
 		
 		for ( DFAgentDescription agent : listeAgents ){
 			if (!agent.getName().equals(this.myAgent.getAID()))

@@ -57,13 +57,14 @@ public class RandomWalkBehaviour extends TickerBehaviour{
 			//System.out.println(this.myAgent.getLocalName()+" -- list of observables: "+lobs);
 			/*Add to graph*/
 			Room self = castle.get_room(myPosition,when);
-			self.setVisited(when);
 			
 			for(Couple<String,List<Attribute>> couple : lobs ){
 				if(couple.getLeft().equals(myPosition))continue;
 				Room linked_room = castle.get_room(couple.getLeft(),when);
 				castle.add_link(self,linked_room,when);
 			}
+			if(self.setVisited(when))
+				castle.page_ranking_reset();
 
 			//Little pause to allow you to follow what is going on
 			/*

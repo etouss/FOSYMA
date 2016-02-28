@@ -16,6 +16,9 @@ public class Castle {
 	private Graph gstream;
 	/*Whether if we have visited every room or not*/
 	private boolean done_visited = false;
+	/*Try to guess where are each agent*/
+	private HashMap<String,Room> agents_position;
+	private HashMap<String,Integer> agents_position_probability;
 	
 	
 	public boolean is_visited(String id){
@@ -92,11 +95,14 @@ public class Castle {
 	}
 	
 	public void update_castle(HashSet<Room> rooms_receive,int when_receive){
+		boolean page_rank_reset_needed = false;
 		for(Room room_receive: rooms_receive){
 			Room room_concerne = this.get_room(room_receive.getId(), when_receive);
-			room_concerne.update_room(room_receive, when_receive);
+			page_rank_reset_needed = room_concerne.update_room(room_receive, when_receive) || page_rank_reset_needed;
 		}
 		this.raz();
+		if(page_rank_reset_needed)
+			page_ranking_reset();
 	}
 	
 	public void raz(){
@@ -105,6 +111,7 @@ public class Castle {
 		}
 	}
 	
+	/*
 	public String where_to_to(String position){
 		float max_reward = 0;
 		String result = "";
@@ -117,6 +124,53 @@ public class Castle {
 			}
 		}	
 		return result;
+	}
+	*/
+	
+	public String where_to_to(String position){
+		float max_reward = 0;
+		String result = "";
+		Room there = this.get_room(position, -1);
+		for(Room r_linked : there.getLinkedRooms()){
+			float reward = r_linked.page_ranking;
+			if(reward > max_reward){
+				max_reward = reward;
+				result = r_linked.getId();
+			}
+		}	
+		return result;
+	}
+	
+	public void page_ranking_soft(){
+		for(Room any_room : rooms.values()){
+			any_room.update_page_ranking();
+		}
+		for(Room any_room : rooms.values()){
+			any_room.equalize_page_ranking();
+		}
+	}
+	
+	public void page_ranking_reset(){
+		int nb_iteration = 10;
+		for(Room any_room : rooms.values()){
+			any_room.page_ranking = any_room.isVisited()?0:1;
+			any_room.prev_page_ranking = any_room.isVisited()?0:1;
+		}
+		for(int i = 0; i < nb_iteration;i ++){
+			for(Room any_room : rooms.values()){
+				any_room.update_page_ranking();
+			}
+			for(Room any_room : rooms.values()){
+				any_room.equalize_page_ranking();
+			}
+		}
+		System.out.println("New visited");
+		/*for(Room any_room : rooms.values()){
+			if(any_room.isVisited())
+				System.out.println(any_room.getId()+" visited :"+any_room.page_ranking);
+			else
+				System.out.println(any_room.getId()+" unvisited :"+any_room.page_ranking);
+		}*/
 	}
 	
 	
