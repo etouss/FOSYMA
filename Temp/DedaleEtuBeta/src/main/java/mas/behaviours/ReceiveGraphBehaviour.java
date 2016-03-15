@@ -13,6 +13,7 @@ import jade.lang.acl.UnreadableException;
 import mas.agents.DummyExploAgent;
 import mas.structuregraph.Castle;
 import mas.structuregraph.Room;
+import statistique.Statistique;
 
 
 
@@ -45,10 +46,11 @@ public class ReceiveGraphBehaviour extends TickerBehaviour{
 			try {
 				HashSet<Room> rooms = (HashSet<Room>)msg.getContentObject();
 				castle.update_castle(rooms,((DummyExploAgent)this.myAgent).getWhen());
-				for(Room r : rooms){
+				Statistique.graph_recu += 1;
+				/*for(Room r : rooms){
 					System.out.print("["+r.getId()+"] ");
 				}
-				System.out.print("\n");
+				System.out.print("\n");*/
 				lack.add(msg.getSender());
 			} catch (UnreadableException e) {
 				// TODO Auto-generated catch block

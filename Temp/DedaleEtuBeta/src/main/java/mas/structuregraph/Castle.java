@@ -22,12 +22,41 @@ public class Castle {
 	private HashMap<AID,String> agents_position;
 	private HashMap<AID,Integer> agents_position_probability;
 	
-	public HashSet<Room> get_occupied_room(int when){
-		int deviance = 20;
-		HashSet<Room> result = new HashSet<Room>();
+	private String last_id = "";
+	
+	private int last_update = -1;
+	
+	private int nb_test = 0;
+	
+	public boolean have_to_send(Integer when){
+		//bourin_update();
+		if(when == null){
+			nb_test ++;
+			System.out.println("SERIOUS?"+ nb_test);
+			return true;
+		}
+		return last_update > when;
+	}
+	
+	public void bourin_update(){
+		for(Room potential_room : rooms.values()){
+			last_update = Math.max(last_update, potential_room.getWhen());
+		}
+	}
+	
+	public void set_last_update(int when){
+		this.last_update = when;
+	}
+	
+	public HashMap<Room,Integer> get_occupied_room(){
+		//int deviance = 20;
+		HashMap<Room,Integer> result = new HashMap<Room,Integer>();
 		for(AID agent : agents_position_probability.keySet()){
-			if(agents_position_probability.get(agent)+deviance > when){
-				result.add(this.get_room(agents_position.get(agent),-1));
+			Room r = this.get_room(agents_position.get(agent),-1);
+			int prob = this.agents_position_probability.get(agent);
+			if(result.get(r) == null || result.get(r) < prob){
+				result.remove(r);
+				result.put(r,prob);
 			}
 		}
 		return result;
@@ -82,18 +111,28 @@ public class Castle {
 		gstream.getNode(r.getId()).setAttribute("ui.class", "visited");
 	}
 	
+	public void setThere(Room r){
+		gstream.getNode(last_id).setAttribute("ui.class", "visited");
+		gstream.getNode(r.getId()).setAttribute("ui.class", "there");
+		last_id = r.getId();
+	}
+	
 	
 	public Castle(DummyExploAgent agent,HashMap<AID,String> agents_position,HashMap<AID,Integer> agents_position_probability){
 		String nodeStyle_treasure="node.visited {"+"fill-color: green;"+"}";
+		String nodeStyle_position="node.there {"+"fill-color: red;"+"}";
 		String defaultNodeStyle= "node {"+"fill-color: black;"+" size-mode:fit;text-alignment:under; text-size:14;text-color:white;text-background-mode:rounded-box;text-background-color:black;}";
-		String nodeStyle=defaultNodeStyle+nodeStyle_treasure;
+		String nodeStyle=defaultNodeStyle+nodeStyle_treasure+nodeStyle_position;
 		this.gstream = new SingleGraph(agent.getLocalName());
 		gstream.setAttribute("ui.stylesheet",nodeStyle);
+		gstream.setAttribute("ui.title",agent.getLocalName());
 		gstream.display();
 		Room first_room = new Room(agent.getCurrentPosition(),this,agent.getWhen());
 		this.add_room(first_room);
 		this.agents_position = agents_position;
 		this.agents_position_probability = agents_position_probability;
+		last_id = first_room.getId();
+		this.setThere(first_room);
 		//this.sources.add(first_room);
 	}
 	
@@ -107,23 +146,23 @@ public class Castle {
 		}
 		
 		/*Modify the copy to only send a fair amount of linked_rooms*/
-		/*if(!to_send.isEmpty()){
-			System.out.print("Send: ");
+		if(!to_send.isEmpty()){
+			//System.out.print("Send: ");
 			for(Room r_to_send : to_send){
 				r_to_send.setLinkedRooms_network(to_send);
-				System.out.print("["+r_to_send.getId()+"] ");
+				//System.out.print("["+r_to_send.getId()+"] ");
 			}
-			System.out.print("\n");
+			//System.out.print("\n");
 			
-		}*/
+		}
 		return to_send;
 	}
 	
 	public void update_castle(HashSet<Room> rooms_receive,int when_receive){
-		boolean page_rank_reset_needed = false;
+		//boolean page_rank_reset_needed = false;
 		for(Room room_receive: rooms_receive){
 			Room room_concerne = this.get_room(room_receive.getId(), when_receive);
-			page_rank_reset_needed = room_concerne.update_room(room_receive, when_receive) | page_rank_reset_needed;
+			room_concerne.update_room(room_receive, when_receive);
 		}
 		this.raz();
 		//if(page_rank_reset_needed)
@@ -138,21 +177,35 @@ public class Castle {
 	
 	
 	public String where_to_to_heavy(String position,int when){
-		HashSet<Room> occupied = get_occupied_room(when);
+		int deviance = 10;
+		HashMap<Room,Integer> occupied = get_occupied_room();
 		double max_reward = 0;
 		String result = "";
 		Room there = this.get_room(position, -1);
 		for(Room r_linked : there.getLinkedRooms()){
-			double reward = r_linked.reward(occupied);
+			double reward = -1;
+			Integer prob = occupied.get(r_linked);
+			if(prob == null || prob < when - deviance)
+				reward = r_linked.reward(occupied,when);
 			if(reward > max_reward){
 				max_reward = reward;
 				result = r_linked.getId();
 			}
+			//System.out.println(reward);
 		}	
+		//System.out.println(max_reward);
 		return result;
 	}
 	
+	public long hash_castle(){
+		long hash = 0;
+		for(Room r : rooms.values()){
+			hash += r.get_hash(); 
+		}
+		return hash;
+	}
 	
+	/*
 	public String where_to_to_page(String position,int when){
 		float max_reward = -1;
 		String result = "";
@@ -191,16 +244,7 @@ public class Castle {
 				any_room.equalize_page_ranking();
 			}
 		}
-		//System.out.println("New visited");
-		/*
-		for(Room any_room : rooms.values()){
-			if(any_room.isVisited())
-				System.out.println(any_room.getId()+" visited :"+any_room.page_ranking);
-			else
-				System.out.println(any_room.getId()+" unvisited :"+any_room.page_ranking);
-		}
-		*/
 	}
-	
+	*/
 	
 }

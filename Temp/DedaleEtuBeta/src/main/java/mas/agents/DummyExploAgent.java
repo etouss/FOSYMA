@@ -107,13 +107,17 @@ public class DummyExploAgent extends abstractAgent{
 		HashSet<AID> lack = new HashSet<AID>();
 		HashMap<AID,Integer> hmsend = new HashMap<AID,Integer>();
 		HashMap<AID,Integer> hmack = new HashMap<AID,Integer>();
-		addBehaviour(new SayThereGraphBehaviour(this, result));
-		addBehaviour(new ReceiveThereBehaviour(this,lsend,agents_position,agents_position_probability));
-		addBehaviour(new GiveGraphBehaviour(this,castle, lsend,hmsend,hmack));
+		HashMap<AID,Long> hmcode = new HashMap<AID,Long>();
+		AgentLock un_move = new AgentLock(this.getAID());
+		
+		
+		addBehaviour(new SayThereGraphBehaviour(this, result,castle,un_move));
+		addBehaviour(new ReceiveThereBehaviour(this,castle,hmack,agents_position,agents_position_probability,un_move));
+		addBehaviour(new GiveGraphBehaviour(this,castle, lsend,hmsend,hmack,hmcode,un_move));
 		addBehaviour(new ReceiveGraphBehaviour(this,castle,lack));
-		addBehaviour(new SayAckGraphBehaviour(this,lack));
-		addBehaviour(new ReceiveAckBehaviour(this,hmsend,hmack,agents_position,agents_position_probability));
-		addBehaviour(new RandomWalkBehaviour(this,castle));
+		addBehaviour(new SayAckGraphBehaviour(this,lack,castle,un_move));
+		addBehaviour(new ReceiveAckBehaviour(this,lsend,hmsend,hmack,agents_position,agents_position_probability,hmcode,un_move));
+		addBehaviour(new RandomWalkBehaviour(this,castle,lsend,lack,un_move));
 
 		System.out.println("the agent "+this.getLocalName()+ " is started");
 

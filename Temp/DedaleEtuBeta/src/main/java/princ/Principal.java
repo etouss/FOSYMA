@@ -28,15 +28,15 @@ public class Principal {
 	private static HashMap<String, ContainerController> containerList=new HashMap<String, ContainerController>();// container's name - container's ref
 	private static List<AgentController> agentList;// agents's ref
 	private static Runtime rt;	
-
+	
 	private static Environment env;// static ref of the real environment
 
 	public static void main(String[] args){
 		
 		//0) Create the real environment and the observed one
-		//env = new Environment(ENVtype.DOROGOVTSEV,130,null);
+		//env = new Environment(ENVtype.GRID,12,null);
 		env = new Environment("src/main/resources/map2015","src/main/resources/map2015-config");
-		//env= new Environment(ENVtype.DOROGOVTSEV,15,null);
+		//env= new Environment(ENVtype.DOROGOVTSEV,150,null);
 
 		
 		//1), create the platform (Main container (DF+AMS) + containers + monitoring agents : RMA and SNIFFER)
@@ -312,7 +312,8 @@ public class Principal {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		/*
+		
+		
 		c = containerList.get("container0");
 		agentName="Explo7";
 		try {
@@ -397,10 +398,10 @@ public class Principal {
 		} catch (StaleProxyException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}*/
+		}
 		
-		
-
+		/*
+		*/
 		
 		System.out.println("Agents launched...");
 		return agentList;

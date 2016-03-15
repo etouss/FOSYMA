@@ -12,8 +12,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+
+import mas.agents.AgentLock;
 import mas.agents.DummyExploAgent;
 import mas.structuregraph.Castle;
+import mas.structuregraph.Room;
+import statistique.Statistique;
 
 
 
@@ -26,13 +30,17 @@ public class GiveGraphBehaviour extends TickerBehaviour{
 	private HashSet<AID> lsend;
 	private HashMap<AID,Integer> hmsend;
 	private HashMap<AID,Integer> hmack;
+	private HashMap<AID,Long> hmcode;
+	private AgentLock un_move;
 	
-	public GiveGraphBehaviour (final Agent myagent,Castle castle, HashSet<AID> lsend,HashMap<AID,Integer> hmsend,HashMap<AID,Integer> hmack) {
+	public GiveGraphBehaviour (final Agent myagent,Castle castle, HashSet<AID> lsend,HashMap<AID,Integer> hmsend,HashMap<AID,Integer> hmack,HashMap<AID,Long> hmcode,AgentLock un_move) {
 		super(myagent, 500);
 		this.castle = castle;
 		this.lsend = lsend;
 		this.hmsend = hmsend;
 		this.hmack = hmack;
+		this.hmcode = hmcode;
+		this.un_move = un_move;
 		//super(myagent);
 	}
 
@@ -47,14 +55,24 @@ public class GiveGraphBehaviour extends TickerBehaviour{
 			//System.out.println("Agent "+this.myAgent.getLocalName()+ " is trying to send graph to its friends: "+graph.toString());
 			try {
 				if(hmack.containsKey(aid)){
-					msg.setContentObject(castle.room_to_send(hmack.get(aid)));
+					HashSet<Room> to_send = castle.room_to_send(hmack.get(aid));
+					if(to_send.isEmpty()){
+						System.out.println("ERRRREUUUR");
+					}
+					Statistique.graph_envoye += 1;
+					msg.setContentObject(to_send);
 					//
 				}
 				else{
-					msg.setContentObject(castle.room_to_send(0));
+					HashSet<Room> to_send = castle.room_to_send(0);
+					//if(to_send.isEmpty()) return;
+					Statistique.graph_envoye += 1;
+					msg.setContentObject(to_send);
 				}
 				hmsend.remove(aid);
+				hmcode.remove(aid);
 				hmsend.put(aid, ((DummyExploAgent)myAgent).getWhen());
+				hmcode.put(aid, castle.hash_castle());
 				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -63,6 +81,7 @@ public class GiveGraphBehaviour extends TickerBehaviour{
 			msg.addReceiver(aid);
 			((mas.abstractAgent)this.myAgent).sendMessage(msg);
 			lsend.remove(aid);
+			//un_move.set_lock_move(aid);
 			break;
 		}
 	}
