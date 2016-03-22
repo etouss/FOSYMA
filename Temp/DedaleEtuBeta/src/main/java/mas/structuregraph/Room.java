@@ -33,10 +33,7 @@ public class Room implements Serializable {
 	private transient long hash = 0;
 	
 	
-<<<<<<< HEAD
 	
-=======
->>>>>>> a2fd16af85a169ec6d36edafb6f6a7d6cb0535e6
 	public void hash_room(){
 		long hash = id.hashCode()+treasure_value;
 		for(Room r_linked : linked_rooms){
@@ -156,7 +153,6 @@ public class Room implements Serializable {
 	public void raz(){
 		this.updated = false;
 		hash_room();
-<<<<<<< HEAD
 	}
 	
 	public double get_reward(double nb_unvisited,int step,int coef){
@@ -164,15 +160,6 @@ public class Room implements Serializable {
 		return nb_unvisited/((step+1)*coef*this.getLinkedRooms().size());
 	}
 	
-=======
-	}
-	
-	public double get_reward(double nb_unvisited,int step,int coef){
-		/*prop au truc inexploré*/
-		return nb_unvisited/((step+1)*coef*this.getLinkedRooms().size());
-	}
-	
->>>>>>> a2fd16af85a169ec6d36edafb6f6a7d6cb0535e6
 	public int coef_occupied(int last_coef, Integer when_checked, int when){
 		int deviance = 50;
 		if(when_checked == null){
