@@ -32,7 +32,11 @@ public class SayThereGraphBehaviour extends TickerBehaviour{
 	@Override
 	public void onTick() {
 		//String myPosition=((mas.abstractAgent)this.myAgent).getCurrentPosition();
+<<<<<<< HEAD
 		String myPosition = ((mas.abstractAgent)this.myAgent).getCurrentPosition();
+=======
+		String myPosition=((mas.abstractAgent)this.myAgent).getCurrentPosition();
+>>>>>>> a2fd16af85a169ec6d36edafb6f6a7d6cb0535e6
 		ACLMessage msg=new ACLMessage(ACLMessage.REQUEST);
 		msg.setSender(this.myAgent.getAID());
 		if(!castle.is_done_visited())

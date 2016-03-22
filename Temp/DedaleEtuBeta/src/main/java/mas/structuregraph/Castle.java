@@ -23,6 +23,7 @@ public class Castle {
 	private HashMap<AID,Integer> agents_position_probability;
 	
 	private String last_id = "";
+<<<<<<< HEAD
 	
 	private int last_update = -1;
 	
@@ -44,6 +45,29 @@ public class Castle {
 		}
 	}
 	
+=======
+	
+	private int last_update = -1;
+	
+	private int nb_test = 0;
+	
+	public boolean have_to_send(Integer when){
+		//bourin_update();
+		if(when == null){
+			nb_test ++;
+			System.out.println("SERIOUS?"+ nb_test);
+			return true;
+		}
+		return last_update > when;
+	}
+	
+	public void bourin_update(){
+		for(Room potential_room : rooms.values()){
+			last_update = Math.max(last_update, potential_room.getWhen());
+		}
+	}
+	
+>>>>>>> a2fd16af85a169ec6d36edafb6f6a7d6cb0535e6
 	public void set_last_update(int when){
 		this.last_update = when;
 	}
@@ -116,6 +140,7 @@ public class Castle {
 	}
 	
 	public void setVisited(Room r){
+<<<<<<< HEAD
 		if (r.get_treasure_value() > 0)
 			gstream.getNode(r.getId()).setAttribute("ui.class", "treasure");
 		else
@@ -138,6 +163,23 @@ public class Castle {
 		String nodeStyle_position="node.there {"+"fill-color: red;"+"}";
 		String defaultNodeStyle= "node {"+"fill-color: black;"+" size-mode:fit;text-alignment:under; text-size:14;text-color:white;text-background-mode:rounded-box;text-background-color:black;}";
 		String nodeStyle=defaultNodeStyle+nodeStyle_visited+nodeStyle_treasure+nodeStyle_position;
+=======
+		gstream.getNode(r.getId()).setAttribute("ui.class", "visited");
+	}
+	
+	public void setThere(Room r){
+		gstream.getNode(last_id).setAttribute("ui.class", "visited");
+		gstream.getNode(r.getId()).setAttribute("ui.class", "there");
+		last_id = r.getId();
+	}
+	
+	
+	public Castle(DummyExploAgent agent,HashMap<AID,String> agents_position,HashMap<AID,Integer> agents_position_probability){
+		String nodeStyle_treasure="node.visited {"+"fill-color: green;"+"}";
+		String nodeStyle_position="node.there {"+"fill-color: red;"+"}";
+		String defaultNodeStyle= "node {"+"fill-color: black;"+" size-mode:fit;text-alignment:under; text-size:14;text-color:white;text-background-mode:rounded-box;text-background-color:black;}";
+		String nodeStyle=defaultNodeStyle+nodeStyle_treasure+nodeStyle_position;
+>>>>>>> a2fd16af85a169ec6d36edafb6f6a7d6cb0535e6
 		this.gstream = new SingleGraph(agent.getLocalName());
 		gstream.setAttribute("ui.stylesheet",nodeStyle);
 		gstream.setAttribute("ui.title",agent.getLocalName());
@@ -168,7 +210,11 @@ public class Castle {
 				//System.out.print("["+r_to_send.getId()+"] ");
 			}
 			//System.out.print("\n");
+<<<<<<< HEAD
 
+=======
+			
+>>>>>>> a2fd16af85a169ec6d36edafb6f6a7d6cb0535e6
 		}
 		return to_send;
 	}
@@ -189,8 +235,13 @@ public class Castle {
 			any_room.raz();
 		}
 	}
+<<<<<<< HEAD
 
 
+=======
+	
+	
+>>>>>>> a2fd16af85a169ec6d36edafb6f6a7d6cb0535e6
 	public String where_to_to_heavy(String position,int when){
 		int deviance = 10;
 		HashMap<Room,Integer> occupied = get_occupied_room();
@@ -207,6 +258,7 @@ public class Castle {
 				result = r_linked.getId();
 			}
 			//System.out.println(reward);
+<<<<<<< HEAD
 		}
 		//System.out.println(max_reward);
 		return result;
@@ -220,6 +272,21 @@ public class Castle {
 		return hash;
 	}
 
+=======
+		}	
+		//System.out.println(max_reward);
+		return result;
+	}
+	
+	public long hash_castle(){
+		long hash = 0;
+		for(Room r : rooms.values()){
+			hash += r.get_hash(); 
+		}
+		return hash;
+	}
+	
+>>>>>>> a2fd16af85a169ec6d36edafb6f6a7d6cb0535e6
 	/*
 	public String where_to_to_page(String position,int when){
 		float max_reward = -1;
@@ -235,7 +302,11 @@ public class Castle {
 		System.out.println("Go : "+result);
 		return result;
 	}
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> a2fd16af85a169ec6d36edafb6f6a7d6cb0535e6
 	public void page_ranking_soft(){
 		for(Room any_room : rooms.values()){
 			any_room.update_page_ranking();
@@ -244,7 +315,11 @@ public class Castle {
 			any_room.equalize_page_ranking();
 		}
 	}
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> a2fd16af85a169ec6d36edafb6f6a7d6cb0535e6
 	public void page_ranking_reset(){
 		int nb_iteration = 5;
 		for(Room any_room : rooms.values()){
@@ -261,5 +336,9 @@ public class Castle {
 		}
 	}
 	*/
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> a2fd16af85a169ec6d36edafb6f6a7d6cb0535e6
 }
