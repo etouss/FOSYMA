@@ -34,8 +34,8 @@ public class Principal {
 	public static void main(String[] args){
 		
 		//0) Create the real environment and the observed one
-		env = new Environment(ENVtype.GRID_T,12,null);
-//		env = new Environment("src/main/resources/map2015","src/main/resources/map2015-config");
+		//env = new Environment(ENVtype.GRID,12,null);
+		env = new Environment("src/main/resources/map2015","src/main/resources/map2015-config");
 		//env= new Environment(ENVtype.DOROGOVTSEV,150,null);
 
 		
@@ -270,7 +270,7 @@ public class Principal {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		/*
 		c = containerList.get("container0");
 		agentName="Explo4";
 		try {
@@ -399,7 +399,7 @@ public class Principal {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		*/
 		/*
 		*/
 		

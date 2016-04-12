@@ -45,7 +45,10 @@ public class ReceiveGraphBehaviour extends TickerBehaviour{
 			//this.finished=true;
 			try {
 				HashSet<Room> rooms = (HashSet<Room>)msg.getContentObject();
+				//System.out.println("Graph received from "+ msg.getSender() + "    " + rooms.toString());
+				//System.out.println("before the message!!!!!!!"  + ((DummyExploAgent)this.myAgent).getCastle().toString());
 				castle.update_castle(rooms,((DummyExploAgent)this.myAgent).getWhen());
+				//System.out.println("Hey there!!!!!!!"  + ((DummyExploAgent)this.myAgent).getCastle().toString());
 				Statistique.graph_recu += 1;
 				/*for(Room r : rooms){
 					System.out.print("["+r.getId()+"] ");

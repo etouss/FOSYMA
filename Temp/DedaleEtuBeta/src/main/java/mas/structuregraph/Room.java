@@ -82,14 +82,19 @@ public class Room implements Serializable {
 	}
 	
 	public void setVisited(int when){
-		if(!visited){
+		//if(!visited || treasure_value <= 0){
 			visited = true;
 			this.when = when;
 			castle.set_last_update(when);
 			//page_ranking -= 1;
 			//prev_page_ranking -= 1;
 			castle.setVisited(this);
-		}
+			
+		//}
+	}
+	
+	public String toString(){
+		return Integer.toString(treasure_value);
 	}
 	
 	public HashSet<Room> getLinkedRooms(){
@@ -123,6 +128,7 @@ public class Room implements Serializable {
 	public Room(Room room_to_copy){
 		this.id = room_to_copy.getId();
 		this.visited = room_to_copy.isVisited();
+		this.set_treasure_value(room_to_copy.get_treasure_value());
 		this.linked_rooms = new HashSet<Room>(room_to_copy.getLinkedRooms());
 		
 		
@@ -140,6 +146,9 @@ public class Room implements Serializable {
 		}
 		/*If new_info update this.when*/
 		
+		if(network_room.get_treasure_value() > 0 ){
+			this.set_treasure_value(network_room.get_treasure_value());
+		}
 		
 		/*Update linked_rooms*/
 		for(Room network_linked_room :network_room.getLinkedRooms()){

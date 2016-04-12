@@ -98,7 +98,8 @@ public class RandomWalkBehaviour extends TickerBehaviour{
 					System.out.println("My current backpack capacity is:"+ ((mas.abstractAgent)this.myAgent).getBackPackFreeSpace());
 					System.out.println("Value of the treasure on the current position: "+a.getValue());
 					
-					(((DummyExploAgent)this.myAgent).getCastle().get_room(myPosition)).set_treasure_value(Integer.parseInt(a.getValue().toString()));
+					(((DummyExploAgent)this.myAgent).getCastle().get_room(myPosition)).set_treasure_value((Integer) a.getValue());
+					//System.out.println(((DummyExploAgent)this.myAgent).getCastle().toString());
 					
 					System.out.println("The agent grabbed :"+((mas.abstractAgent)this.myAgent).pick());
 					System.out.println("the remaining backpack capacity is: "+ ((mas.abstractAgent)this.myAgent).getBackPackFreeSpace());
