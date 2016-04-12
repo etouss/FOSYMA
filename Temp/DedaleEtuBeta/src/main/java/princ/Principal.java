@@ -187,7 +187,7 @@ public class Principal {
 		agentName="Golem";
 		try {
 			Object[] objtab=new Object[]{env};//used to give informations to the agent
-			AgentController	ag=c.createNewAgent(agentName,mas.agents.DummyWumpusAgent.class.getName(),objtab);
+			AgentController	ag=c.createNewAgent(agentName,mas.agents.GolemAgent.class.getName(),objtab);
 			agentList.add(ag);
 			System.out.println(agentName+" launched");
 		} catch (StaleProxyException e) {
