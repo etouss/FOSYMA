@@ -83,8 +83,8 @@ public class RandomWalkBehaviour extends TickerBehaviour{
 				System.in.read();
 			} catch (IOException e) {
 				e.printStackTrace();
-			}
-			*/
+			}*/
+
 
 
 			//list of attribute associated to the currentPosition

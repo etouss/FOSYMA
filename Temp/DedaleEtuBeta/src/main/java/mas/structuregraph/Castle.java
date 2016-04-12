@@ -213,7 +213,6 @@ public class Castle {
 		for(Room room_receive: rooms_receive){
 			Room room_concerne = this.get_room(room_receive.getId(), when_receive);
 			room_concerne.update_room(room_receive, when_receive);
-			System.out.println("update  " + room_concerne.toString() );
 		}
 		this.raz();
 		//if(page_rank_reset_needed)
