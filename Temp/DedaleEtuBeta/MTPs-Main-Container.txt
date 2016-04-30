@@ -1,1 +1,1 @@
-http://tsstpc.wifi.crans.org:7778/acc
+http://etiennes-air:7778/acc
