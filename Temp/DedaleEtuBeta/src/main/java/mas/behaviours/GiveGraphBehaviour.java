@@ -68,6 +68,7 @@ public class GiveGraphBehaviour extends TickerBehaviour{
 					//if(to_send.isEmpty()) return;
 					Statistique.graph_envoye += 1;
 					msg.setContentObject(to_send);
+					//System.out.println(myAgent.getName() + "send " + to_send.toString() );
 				}
 				hmsend.remove(aid);
 				hmcode.remove(aid);

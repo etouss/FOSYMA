@@ -1,0 +1,79 @@
+﻿
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch master
+# Your branch is behind 'origin/master' by 2 commits, and can be fast-forwarded.
+#   (use "git pull" to update your local branch)
+#
+# Changes to be committed:
+#	new file:   DedaleEtu/.idea/compiler.xml
+#	new file:   DedaleEtu/.idea/copyright/profiles_settings.xml
+#	new file:   DedaleEtu/.idea/encodings.xml
+#	new file:   DedaleEtu/.idea/misc.xml
+#	new file:   DedaleEtu/.idea/workspace.xml
+#	new file:   DedaleEtu/DedaleEtu.iml
+#	new file:   DedaleEtu/src/main/java/mas/agents/DummyExploAgent.java
+#	new file:   DedaleEtu/src/main/java/mas/behaviours/RandomWalkBehaviour.java
+#	new file:   DedaleEtu/src/main/java/mas/behaviours/SayHello.java
+#	new file:   DedaleEtu/src/main/java/princ/Principal.java
+#	new file:   DedaleEtu/src/main/resources/Dedale.jar
+#	new file:   DedaleEtu/src/test/java/TestCreateGraphGS.java
+#	new file:   DedaleEtu/target/classes/Dedale.jar
+#	deleted:    Temp/DedaleEtuBeta/.idea/libraries/Dedale.xml
+#	modified:   Temp/DedaleEtuBeta/.idea/libraries/Maven__bouncycastle_bcmail_jdk14_139.xml
+#	new file:   Temp/DedaleEtuBeta/.idea/libraries/Maven__junit_junit_4_12.xml
+#	deleted:    Temp/DedaleEtuBeta/.idea/libraries/Maven__junit_junit_4_3_1.xml
+#	renamed:    Temp/DedaleEtuBeta/.idea/libraries/Maven__org_apache_commons_commons_math3_3_0.xml -> Temp/DedaleEtuBeta/.idea/libraries/Maven__org_apache_commons_commons_math3_3_4_1.xml
+#	renamed:    Temp/DedaleEtuBeta/.idea/libraries/Maven__org_graphstream_gs_algo_1_2.xml -> Temp/DedaleEtuBeta/.idea/libraries/Maven__org_graphstream_gs_algo_1_3.xml
+#	renamed:    Temp/DedaleEtuBeta/.idea/libraries/Maven__org_graphstream_gs_core_1_2.xml -> Temp/DedaleEtuBeta/.idea/libraries/Maven__org_graphstream_gs_core_1_3.xml
+#	renamed:    Temp/DedaleEtuBeta/.idea/libraries/Maven__org_graphstream_gs_ui_1_2.xml -> Temp/DedaleEtuBeta/.idea/libraries/Maven__org_graphstream_gs_ui_1_3.xml
+#	new file:   Temp/DedaleEtuBeta/.idea/libraries/Maven__org_hamcrest_hamcrest_core_1_3.xml
+#	renamed:    Temp/DedaleEtuBeta/.idea/libraries/Maven__org_scala_lang_scala_library_2_10_0.xml -> Temp/DedaleEtuBeta/.idea/libraries/Maven__org_scala_lang_scala_library_2_10_1.xml
+#	modified:   Temp/DedaleEtuBeta/.idea/vcs.xml
+#	modified:   Temp/DedaleEtuBeta/.idea/workspace.xml
+#	modified:   Temp/DedaleEtuBeta/APDescription.txt
+#	modified:   Temp/DedaleEtuBeta/DedaleEtu.iml
+#	modified:   Temp/DedaleEtuBeta/MTPs-Main-Container.txt
+#	new file:   Temp/DedaleEtuBeta/src/main/java/mas/agents/AgentLock.java
+#	modified:   Temp/DedaleEtuBeta/src/main/java/mas/agents/DummyExploAgent.java
+#	modified:   Temp/DedaleEtuBeta/src/main/java/mas/behaviours/GiveGraphBehaviour.java
+#	modified:   Temp/DedaleEtuBeta/src/main/java/mas/behaviours/RandomWalkBehaviour.java
+#	modified:   Temp/DedaleEtuBeta/src/main/java/mas/behaviours/ReceiveAckBehaviour.java
+#	modified:   Temp/DedaleEtuBeta/src/main/java/mas/behaviours/ReceiveGraphBehaviour.java
+#	modified:   Temp/DedaleEtuBeta/src/main/java/mas/behaviours/ReceiveThereBehaviour.java
+#	modified:   Temp/DedaleEtuBeta/src/main/java/mas/behaviours/SayAckGraphBehaviour.java
+#	modified:   Temp/DedaleEtuBeta/src/main/java/mas/behaviours/SayThereGraphBehaviour.java
+#	modified:   Temp/DedaleEtuBeta/src/main/java/mas/structuregraph/Castle.java
+#	modified:   Temp/DedaleEtuBeta/src/main/java/mas/structuregraph/Room.java
+#	modified:   Temp/DedaleEtuBeta/src/main/java/princ/Principal.java
+#	new file:   Temp/DedaleEtuBeta/src/main/java/statistique/Statistique.java
+#	new file:   Temp/DedaleEtuBeta/src/main/resources/graphStream/gs-algo-1.3/gs-algo-1.3-javadoc.jar
+#	new file:   Temp/DedaleEtuBeta/src/main/resources/graphStream/gs-algo-1.3/gs-algo-1.3-javadoc.jar.asc
+#	new file:   Temp/DedaleEtuBeta/src/main/resources/graphStream/gs-algo-1.3/gs-algo-1.3-sources.jar
+#	new file:   Temp/DedaleEtuBeta/src/main/resources/graphStream/gs-algo-1.3/gs-algo-1.3-sources.jar.asc
+#	new file:   Temp/DedaleEtuBeta/src/main/resources/graphStream/gs-algo-1.3/gs-algo-1.3.jar
+#	new file:   Temp/DedaleEtuBeta/src/main/resources/graphStream/gs-algo-1.3/gs-algo-1.3.jar.asc
+#	new file:   Temp/DedaleEtuBeta/src/main/resources/graphStream/gs-algo-1.3/gs-algo-1.3.pom
+#	new file:   Temp/DedaleEtuBeta/src/main/resources/graphStream/gs-algo-1.3/gs-algo-1.3.pom.asc
+#	new file:   Temp/DedaleEtuBeta/src/main/resources/graphStream/gs-core-1.3/gs-core-1.3-javadoc.jar
+#	new file:   Temp/DedaleEtuBeta/src/main/resources/graphStream/gs-core-1.3/gs-core-1.3-javadoc.jar.asc
+#	new file:   Temp/DedaleEtuBeta/src/main/resources/graphStream/gs-core-1.3/gs-core-1.3-sources.jar
+#	new file:   Temp/DedaleEtuBeta/src/main/resources/graphStream/gs-core-1.3/gs-core-1.3-sources.jar.asc
+#	new file:   Temp/DedaleEtuBeta/src/main/resources/graphStream/gs-core-1.3/gs-core-1.3.jar
+#	new file:   Temp/DedaleEtuBeta/src/main/resources/graphStream/gs-core-1.3/gs-core-1.3.jar.asc
+#	new file:   Temp/DedaleEtuBeta/src/main/resources/graphStream/gs-core-1.3/gs-core-1.3.pom
+#	new file:   Temp/DedaleEtuBeta/src/main/resources/graphStream/gs-core-1.3/gs-core-1.3.pom.asc
+#	new file:   Temp/DedaleEtuBeta/src/main/resources/graphStream/gs-ui-1.3/gs-ui-1.3-javadoc.jar
+#	new file:   Temp/DedaleEtuBeta/src/main/resources/graphStream/gs-ui-1.3/gs-ui-1.3-javadoc.jar.asc
+#	new file:   Temp/DedaleEtuBeta/src/main/resources/graphStream/gs-ui-1.3/gs-ui-1.3-sources.jar
+#	new file:   Temp/DedaleEtuBeta/src/main/resources/graphStream/gs-ui-1.3/gs-ui-1.3-sources.jar.asc
+#	new file:   Temp/DedaleEtuBeta/src/main/resources/graphStream/gs-ui-1.3/gs-ui-1.3.jar
+#	new file:   Temp/DedaleEtuBeta/src/main/resources/graphStream/gs-ui-1.3/gs-ui-1.3.jar.asc
+#	new file:   Temp/DedaleEtuBeta/src/main/resources/graphStream/gs-ui-1.3/gs-ui-1.3.pom
+#	new file:   Temp/DedaleEtuBeta/src/main/resources/graphStream/gs-ui-1.3/gs-ui-1.3.pom.asc
+#	new file:   Temp/DedaleEtuBeta/src/main/resources/jade/JADE-src-4.4.0.zip
+#	new file:   Temp/DedaleEtuBeta/src/main/resources/jade/jade.jar
+#	new file:   Temp/DedaleEtuBeta/src/main/resources/map2015
+#	new file:   Temp/DedaleEtuBeta/src/main/resources/map2015config
+#
+

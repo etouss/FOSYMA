@@ -9,6 +9,8 @@ import org.graphstream.graph.implementations.SingleGraph;
 import jade.core.AID;
 
 import java.util.LinkedList;
+
+//import mas.agents.CopyOfDummyExploAgent;
 import mas.agents.DummyExploAgent;
 
 public class Castle {
@@ -36,6 +38,14 @@ public class Castle {
 			return true;
 		}
 		return last_update > when;
+	}
+	
+	public String toString(){
+		String casStr = null;
+		for ( Room room: rooms.values() ){
+			casStr += room.toString() + "    ";
+		}
+		return casStr;
 	}
 	
 	public void bourin_update(){
@@ -84,6 +94,14 @@ public class Castle {
 		return done_visited;
 	}
 	
+	public Room get_room(String id){
+		Room the_room = rooms.get(id);
+		if(the_room == null){
+			return null;
+		}
+		return the_room;
+	}
+	
 	public Room get_room(String id,int when){
 		Room the_room = rooms.get(id);
 		if(the_room == null){
@@ -108,21 +126,33 @@ public class Castle {
 	}
 	
 	public void setVisited(Room r){
-		gstream.getNode(r.getId()).setAttribute("ui.class", "visited");
+		if (r.get_treasure_value() > 0)
+			gstream.getNode(r.getId()).setAttribute("ui.class", "treasure");
+		else
+			gstream.getNode(r.getId()).setAttribute("ui.class", "visited");
 	}
 	
+
+	
 	public void setThere(Room r){
-		gstream.getNode(last_id).setAttribute("ui.class", "visited");
+		Room room = get_room(last_id);
+		if (room.get_treasure_value() > 0)
+			gstream.getNode(last_id).setAttribute("ui.class", "treasure");
+		else
+			gstream.getNode(last_id).setAttribute("ui.class", "visited");
 		gstream.getNode(r.getId()).setAttribute("ui.class", "there");
 		last_id = r.getId();
 	}
 	
+
+	
 	
 	public Castle(DummyExploAgent agent,HashMap<AID,String> agents_position,HashMap<AID,Integer> agents_position_probability){
-		String nodeStyle_treasure="node.visited {"+"fill-color: green;"+"}";
+		String nodeStyle_visited="node.visited {"+"fill-color: green;"+"}";
+		String nodeStyle_treasure="node.treasure {"+"fill-color: yellow;"+"}";
 		String nodeStyle_position="node.there {"+"fill-color: red;"+"}";
 		String defaultNodeStyle= "node {"+"fill-color: black;"+" size-mode:fit;text-alignment:under; text-size:14;text-color:white;text-background-mode:rounded-box;text-background-color:black;}";
-		String nodeStyle=defaultNodeStyle+nodeStyle_treasure+nodeStyle_position;
+		String nodeStyle=defaultNodeStyle+nodeStyle_visited+nodeStyle_treasure+nodeStyle_position;
 		this.gstream = new SingleGraph(agent.getLocalName());
 		gstream.setAttribute("ui.stylesheet",nodeStyle);
 		gstream.setAttribute("ui.title",agent.getLocalName());
@@ -135,12 +165,32 @@ public class Castle {
 		this.setThere(first_room);
 		//this.sources.add(first_room);
 	}
+	/*
+	public Castle(CopyOfDummyExploAgent agent, HashMap<AID, String> agents_position, HashMap<AID, Integer> agents_position_probability2) {
+			String nodeStyle_visited="node.visited {"+"fill-color: green;"+"}";
+			String nodeStyle_treasure="node.treasure {"+"fill-color: yellow;"+"}";
+			String nodeStyle_position="node.there {"+"fill-color: red;"+"}";
+			String defaultNodeStyle= "node {"+"fill-color: black;"+" size-mode:fit;text-alignment:under; text-size:14;text-color:white;text-background-mode:rounded-box;text-background-color:black;}";
+			String nodeStyle=defaultNodeStyle+nodeStyle_visited+nodeStyle_treasure+nodeStyle_position;
+			this.gstream = new SingleGraph(agent.getLocalName());
+			gstream.setAttribute("ui.stylesheet",nodeStyle);
+			gstream.setAttribute("ui.title",agent.getLocalName());
+			gstream.display();
+			Room first_room = new Room(agent.getCurrentPosition(),this,agent.getWhen());
+			this.add_room(first_room);
+			this.agents_position = agents_position;
+			this.agents_position_probability = agents_position_probability;
+			last_id = first_room.getId();
+			this.setThere(first_room);
+	}
 	
+	*/
+
 	public HashSet<Room> room_to_send(int when_last_send){
 		/*Determine which room have to be sent*/
 		HashSet<Room> to_send = new HashSet<Room>();
 		for(Room potential_room : rooms.values()){
-			if(potential_room.getWhen() > when_last_send)
+			if(potential_room.getWhen() > when_last_send || potential_room.get_treasure_value() > 0)
 				/*Add a copy of the room*/
 				to_send.add(new Room(potential_room));
 		}

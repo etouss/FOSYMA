@@ -1,25 +1,26 @@
 package mas.agents;
 
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-
-import env.Environment;
-import mas.abstractAgent;
-import mas.behaviours.*;
-import mas.structuregraph.Castle;
-import mas.utility.*;
 import jade.core.AID;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 
-import jade.domain.DFService;
-import jade.domain.FIPAException;
-import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.ServiceDescription;;
+import java.util.HashMap;
+import java.util.HashSet;
+
+import mas.abstractAgent;
+import mas.behaviours.GiveGraphBehaviour;
+import mas.behaviours.RandomWalkBehaviour;
+import mas.behaviours.ReceiveAckBehaviour;
+import mas.behaviours.ReceiveGraphBehaviour;
+import mas.behaviours.ReceiveThereBehaviour;
+import mas.behaviours.SayAckGraphBehaviour;
+import mas.behaviours.SayThereGraphBehaviour;
+import mas.structuregraph.Castle;
+import mas.structuregraph.Room;
+import env.Environment;
 
 public class DummyExploAgent extends abstractAgent{
 
@@ -130,6 +131,12 @@ public class DummyExploAgent extends abstractAgent{
 	public int getWhen(){
 		return when;
 	}
+	
+	public Castle getCastle(){
+		return this.castle;
+	}
+	
+
 
 	/**
 	 * This method is automatically called after doDelete()

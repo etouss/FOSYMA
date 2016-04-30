@@ -23,7 +23,6 @@ public class Room implements Serializable {
 	private HashSet<Room> linked_rooms = new HashSet<Room>();
 	
 	
-	
 	/*Stuff that doesn't go through network*/
 	/*Useful for intern algorithm */
 	private transient Castle castle = null;
@@ -32,6 +31,7 @@ public class Room implements Serializable {
 	//public transient float page_ranking = 1;
 	//public transient float prev_page_ranking = 1;
 	private transient long hash = 0;
+	
 	
 	
 	public void hash_room(){
@@ -73,15 +73,28 @@ public class Room implements Serializable {
 		return this.visited;
 	}
 	
+	public int get_treasure_value(){
+		return this.treasure_value;
+	}
+	
+	public void set_treasure_value(int value){
+		treasure_value = value;
+	}
+	
 	public void setVisited(int when){
-		if(!visited){
+		//if(!visited || treasure_value <= 0){
 			visited = true;
 			this.when = when;
 			castle.set_last_update(when);
 			//page_ranking -= 1;
 			//prev_page_ranking -= 1;
 			castle.setVisited(this);
-		}
+			
+		//}
+	}
+	
+	public String toString(){
+		return Integer.toString(treasure_value);
 	}
 	
 	public HashSet<Room> getLinkedRooms(){
@@ -115,7 +128,10 @@ public class Room implements Serializable {
 	public Room(Room room_to_copy){
 		this.id = room_to_copy.getId();
 		this.visited = room_to_copy.isVisited();
+		this.set_treasure_value(room_to_copy.get_treasure_value());
 		this.linked_rooms = new HashSet<Room>(room_to_copy.getLinkedRooms());
+		
+		
 		/*Copy the rest*/
 	}
 	
@@ -130,6 +146,9 @@ public class Room implements Serializable {
 		}
 		/*If new_info update this.when*/
 		
+		if(network_room.get_treasure_value() > 0 ){
+			this.set_treasure_value(network_room.get_treasure_value());
+		}
 		
 		/*Update linked_rooms*/
 		for(Room network_linked_room :network_room.getLinkedRooms()){
