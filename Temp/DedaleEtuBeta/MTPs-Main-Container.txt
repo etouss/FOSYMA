@@ -1,5 +1,1 @@
-<<<<<<< HEAD
-http://etiennes-air:7778/acc
-=======
-http://192.168.1.67:7778/acc
->>>>>>> 3743747b0644072a3163f48a660c59f5d37893ad
+http://fixemsi.crans.org:7778/acc
