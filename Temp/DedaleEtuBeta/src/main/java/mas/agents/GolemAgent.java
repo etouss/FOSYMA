@@ -49,7 +49,7 @@ public class GolemAgent extends abstractAgent {
             String myPosition = GolemAgent.this.getCurrentPosition();
             if(myPosition != "") {
                 List lobs = GolemAgent.this.observe();
-                System.out.println("lobs: " + lobs);
+                //System.out.println("lobs: " + lobs);
 /*
                 try {
                     System.out.println("Press a key to allow the wumpus " + this.myAgent.getLocalName() + " to move to the next step ");

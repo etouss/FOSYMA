@@ -10,7 +10,7 @@ public class AgentLock {
 	private long lock_move;
 	private long mail_check;
 	private HashMap<AID,Long> hmlock = new HashMap<AID,Long>();
-	private final static long TTL = (long)0;
+	private final static long TTL = (long)100;
 	private final static long MAILBOX_CHECK = (long)0;
 	
 	public AgentLock(AID aid){

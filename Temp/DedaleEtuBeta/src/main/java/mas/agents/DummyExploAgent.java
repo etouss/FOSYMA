@@ -11,13 +11,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import mas.abstractAgent;
-import mas.behaviours.GiveGraphBehaviour;
-import mas.behaviours.RandomWalkBehaviour;
-import mas.behaviours.ReceiveAckBehaviour;
-import mas.behaviours.ReceiveGraphBehaviour;
-import mas.behaviours.ReceiveThereBehaviour;
-import mas.behaviours.SayAckGraphBehaviour;
-import mas.behaviours.SayThereGraphBehaviour;
+import mas.behaviour.Walk;
+import mas.behavioursCom.ReceiveConfirm;
+import mas.behavioursCom.ReceiveInform;
+import mas.behavioursCom.ReceiveRequest;
+import mas.behavioursCom.SayConfirm;
+import mas.behavioursCom.SayInform;
+import mas.behavioursCom.SayRequest;
+import mas.data.Data;
 import mas.structuregraph.Castle;
 import mas.structuregraph.Room;
 import env.Environment;
@@ -30,6 +31,13 @@ public class DummyExploAgent extends abstractAgent{
 	private static final long serialVersionUID = -1784844593772918359L;
 	private Castle castle;
 	private int when= 0;
+	private int trueTick;
+	private AgentMode mode = AgentMode.EXPLORER;
+	private String target = null;
+	private HashMap<AID,AgentInfo> agents;
+	private Data data;
+	public int totalbackpack;
+	private AgentDescisionMaker dm;
 	//private boolean done = false;
 
 
@@ -74,9 +82,8 @@ public class DummyExploAgent extends abstractAgent{
 
 		
 		//Add the behaviours
-		HashMap<AID,String> agents_position = new HashMap<AID,String>();
-		HashMap<AID,Integer> agents_position_probability = new HashMap<AID,Integer>();
-		this.castle = new Castle(this,agents_position,agents_position_probability);
+		this.agents = new HashMap<AID,AgentInfo>();
+		this.castle = new Castle(this,agents);
 		//this.graph.display();
 		//addBehaviour(new SayHello(this));
 		//sd.setType( "explorer" ); 
@@ -112,20 +119,28 @@ public class DummyExploAgent extends abstractAgent{
 		AgentLock un_move = new AgentLock(this.getAID());
 		
 		
-		addBehaviour(new SayThereGraphBehaviour(this, result,castle,un_move));
-		addBehaviour(new ReceiveThereBehaviour(this,castle,hmack,agents_position,agents_position_probability,un_move));
-		addBehaviour(new GiveGraphBehaviour(this,castle, lsend,hmsend,hmack,hmcode,un_move));
-		addBehaviour(new ReceiveGraphBehaviour(this,castle,lack));
-		addBehaviour(new SayAckGraphBehaviour(this,lack,castle,un_move));
-		addBehaviour(new ReceiveAckBehaviour(this,lsend,hmsend,hmack,agents_position,agents_position_probability,hmcode,un_move));
-		addBehaviour(new RandomWalkBehaviour(this,castle,lsend,lack,un_move));
+		addBehaviour(new SayRequest(this, result,castle,un_move));
+		addBehaviour(new ReceiveRequest(this,castle,hmack,agents,un_move));
+		addBehaviour(new SayInform(this,castle, lsend,hmsend,hmack,hmcode,un_move));
+		addBehaviour(new ReceiveInform(this,castle,lack,agents,un_move));
+		addBehaviour(new SayConfirm(this,lack,castle,un_move));
+		addBehaviour(new ReceiveConfirm(this,lsend,hmsend,hmack,agents,hmcode,un_move));
+		addBehaviour(new Walk(this,castle,lsend,lack,un_move));
 
 		System.out.println("the agent "+this.getLocalName()+ " is started");
+		totalbackpack = this.getBackPackFreeSpace();
+		data = new Data(this,result.length);
+		dm = new AgentDescisionMaker(this);
 
 	}
 	
 	public void incWhen(){
+		agents.remove(this.getAID());
+		AgentInfo ai = new AgentInfo(this,0);
+		ai.setWhen(when+1);
+		agents.put(getAID(), ai);
 		this.when++;
+		data.update_value(this.when);
 	}
 	
 	public int getWhen(){
@@ -136,8 +151,35 @@ public class DummyExploAgent extends abstractAgent{
 		return this.castle;
 	}
 	
-
-
+	public HashMap<AID,AgentInfo> getAgents(){
+		return this.agents;
+	}
+	
+	public AgentMode getMode(){
+		return this.mode;
+	}
+	
+	public String getTarget(){
+		return this.target;
+	}
+	
+	public void setMode(AgentMode mode){
+		this.mode = mode;
+	}
+	
+	
+	public Data getData(){
+		return data;
+	}
+	
+	public int getTick(){
+		return trueTick;
+	}
+	
+	public void dm(Room r){
+		dm.on_treasure(r);
+	}
+	
 	/**
 	 * This method is automatically called after doDelete()
 	 */

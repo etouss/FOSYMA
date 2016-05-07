@@ -1,4 +1,4 @@
-package mas.behaviours;
+package mas.behaviour;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -16,16 +16,16 @@ import mas.structuregraph.Castle;
 import mas.structuregraph.Room;
 import statistique.Statistique;
 
-/**************************************
+/******************************************
  * 
  * 
  * 				BEHAVIOUR
  * 
  * 
- **************************************/
+ ******************************************/
 
 
-public class RandomWalkBehaviour extends TickerBehaviour{
+public class Walk extends TickerBehaviour{
 	/**
 	 * When an agent choose to move
 	 *  
@@ -37,22 +37,24 @@ public class RandomWalkBehaviour extends TickerBehaviour{
 	private HashSet<AID> lsend;
 	private HashSet<AID> lack;
 	private AgentLock un_move;
+	private DummyExploAgent agent;
 
-	public RandomWalkBehaviour (final mas.abstractAgent myagent,Castle castle,HashSet<AID> lsend,HashSet<AID> lack,AgentLock un_move) {
+	public Walk (final DummyExploAgent myagent,Castle castle,HashSet<AID> lsend,HashSet<AID> lack,AgentLock un_move) {
 		super(myagent, 500);
 		this.castle = castle;
 		this.lsend = lsend;
 		this.lack = lack;
 		this.un_move = un_move;
+		this.agent = myagent;
 		
 		//super(myagent);
 	}
 
 	@Override
 	public void onTick() {
-		
-		((DummyExploAgent)this.myAgent).incWhen();
-		int when = ((DummyExploAgent)this.myAgent).getWhen();
+		agent.incWhen();
+		//((DummyExploAgent)this.myAgent).updateValue();
+		int when = agent.getWhen();
 		
 		//Example to retrieve the current position
 		String myPosition=((mas.abstractAgent)this.myAgent).getCurrentPosition();
@@ -97,26 +99,34 @@ public class RandomWalkBehaviour extends TickerBehaviour{
 				case TREASURE:
 					System.out.println("My current backpack capacity is:"+ ((mas.abstractAgent)this.myAgent).getBackPackFreeSpace());
 					System.out.println("Value of the treasure on the current position: "+a.getValue());
-					
-					(((DummyExploAgent)this.myAgent).getCastle().get_room(myPosition)).set_treasure_value((Integer) a.getValue());
 					//System.out.println(((DummyExploAgent)this.myAgent).getCastle().toString());
 					
-					System.out.println("The agent grabbed :"+((mas.abstractAgent)this.myAgent).pick());
-					System.out.println("the remaining backpack capacity is: "+ ((mas.abstractAgent)this.myAgent).getBackPackFreeSpace());
-					System.out.println("The value of treasure on the current position: (unchanged before a new call to observe()): "+a.getValue());
-					b=true;
+					//System.out.println("The agent grabbed :"+((mas.abstractAgent)this.myAgent).pick());
+					//System.out.println("the remaining backpack capacity is: "+ ((mas.abstractAgent)this.myAgent).getBackPackFreeSpace());
+					//System.out.println("The value of treasure on the current position: (unchanged before a new call to observe()): "+a.getValue());
+					//b=true;
+					
+					self.set_treasure_value((Integer) a.getValue(),when);
+					try {
+						System.out.println("Press a key to allow the agent "+this.myAgent.getLocalName() +" to execute its next move");
+						System.in.read();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					
 					break;
 
 				default:
 					break;
 				}
 			}
-
+			
 			//If the agent picked (part of) the treasure
-			if (b){
-				List<Couple<String,List<Attribute>>> lobs2=((mas.abstractAgent)this.myAgent).observe();//myPosition
-				System.out.println("lobs after picking "+lobs2);
-			}
+			//if (b){
+			//	List<Couple<String,List<Attribute>>> lobs2=((mas.abstractAgent)this.myAgent).observe();//myPosition
+			//	System.out.println("lobs after picking "+lobs2);
+			//}
+			
 			
 			
 			/*
@@ -142,6 +152,14 @@ public class RandomWalkBehaviour extends TickerBehaviour{
 				System.out.println("Waiting ");
 				return;
 			}
+			
+			
+			
+			/*On détermine le mode dans lequelle on doit se placer*/
+			
+			/*On choisit alors le déplacement adapter*/
+			
+			agent.dm(self);
 			
 			if(castle.is_done_visited()){
 				System.out.println("Propose :"+Statistique.graph_propose+" Send :"+Statistique.graph_envoye+" Recu : "+Statistique.graph_recu+" Ack :"+Statistique.graph_ack);

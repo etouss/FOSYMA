@@ -77,20 +77,29 @@ public class Room implements Serializable {
 		return this.treasure_value;
 	}
 	
-	public void set_treasure_value(int value){
-		treasure_value = value;
+	public void set_treasure_value(int value,int when){
+		if(value == -1) return;
+		if(this.treasure_value == -1){
+			castle.set_last_update(when);
+			this.when = when;
+			treasure_value = value;
+		}
+		if(this.treasure_value > value){
+			castle.set_last_update(when);
+			this.when = when;
+			treasure_value = value;
+		}
 	}
 	
 	public void setVisited(int when){
-		//if(!visited || treasure_value <= 0){
+		if(!visited){
 			visited = true;
 			this.when = when;
 			castle.set_last_update(when);
 			//page_ranking -= 1;
 			//prev_page_ranking -= 1;
 			castle.setVisited(this);
-			
-		//}
+		}
 	}
 	
 	public String toString(){
@@ -128,7 +137,7 @@ public class Room implements Serializable {
 	public Room(Room room_to_copy){
 		this.id = room_to_copy.getId();
 		this.visited = room_to_copy.isVisited();
-		this.set_treasure_value(room_to_copy.get_treasure_value());
+		this.treasure_value = room_to_copy.get_treasure_value();
 		this.linked_rooms = new HashSet<Room>(room_to_copy.getLinkedRooms());
 		
 		
@@ -145,10 +154,7 @@ public class Room implements Serializable {
 			this.setVisited(when_receive);
 		}
 		/*If new_info update this.when*/
-		
-		if(network_room.get_treasure_value() > 0 ){
-			this.set_treasure_value(network_room.get_treasure_value());
-		}
+		this.set_treasure_value(network_room.get_treasure_value(),when_receive);
 		
 		/*Update linked_rooms*/
 		for(Room network_linked_room :network_room.getLinkedRooms()){
@@ -175,7 +181,7 @@ public class Room implements Serializable {
 			return last_coef;
 		}
 		//System.out.println(when-when_checked);
-		return last_coef*deviance/Math.min(deviance,when-when_checked);
+		return last_coef*deviance/Math.min(deviance,(when-when_checked)+1);
 	}
 	
 	public double reward(HashMap<Room,Integer> occupied,int when_asked){

@@ -1,4 +1,4 @@
-package mas.behaviours;
+package mas.behavioursCom;
 
 import java.io.IOException;
 
@@ -15,13 +15,15 @@ import java.util.LinkedList;
 
 import mas.agents.AgentLock;
 import mas.agents.DummyExploAgent;
+import mas.com.DataInform;
+import mas.com.Inform;
 import mas.structuregraph.Castle;
 import mas.structuregraph.Room;
 import statistique.Statistique;
 
 
 
-public class GiveGraphBehaviour extends TickerBehaviour{
+public class SayInform extends TickerBehaviour{
 	/**
 	 * 
 	 */
@@ -32,8 +34,9 @@ public class GiveGraphBehaviour extends TickerBehaviour{
 	private HashMap<AID,Integer> hmack;
 	private HashMap<AID,Long> hmcode;
 	private AgentLock un_move;
+	private DummyExploAgent agent;
 	
-	public GiveGraphBehaviour (final Agent myagent,Castle castle, HashSet<AID> lsend,HashMap<AID,Integer> hmsend,HashMap<AID,Integer> hmack,HashMap<AID,Long> hmcode,AgentLock un_move) {
+	public SayInform (final DummyExploAgent myagent,Castle castle, HashSet<AID> lsend,HashMap<AID,Integer> hmsend,HashMap<AID,Integer> hmack,HashMap<AID,Long> hmcode,AgentLock un_move) {
 		super(myagent, 500);
 		this.castle = castle;
 		this.lsend = lsend;
@@ -41,6 +44,7 @@ public class GiveGraphBehaviour extends TickerBehaviour{
 		this.hmack = hmack;
 		this.hmcode = hmcode;
 		this.un_move = un_move;
+		this.agent = myagent;
 		//super(myagent);
 	}
 
@@ -60,14 +64,14 @@ public class GiveGraphBehaviour extends TickerBehaviour{
 						System.out.println("ERRRREUUUR");
 					}
 					Statistique.graph_envoye += 1;
-					msg.setContentObject(to_send);
+					msg.setContentObject(new DataInform(this.agent,Inform.Graph,to_send));
 					//
 				}
 				else{
 					HashSet<Room> to_send = castle.room_to_send(0);
 					//if(to_send.isEmpty()) return;
 					Statistique.graph_envoye += 1;
-					msg.setContentObject(to_send);
+					msg.setContentObject(new DataInform(this.agent,Inform.Graph,to_send));
 					//System.out.println(myAgent.getName() + "send " + to_send.toString() );
 				}
 				hmsend.remove(aid);

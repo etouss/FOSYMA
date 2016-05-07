@@ -1,16 +1,20 @@
-package mas.behaviours;
+package mas.behavioursCom;
 
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.lang.acl.ACLMessage;
+
+import java.io.IOException;
 import java.util.HashSet;
 import mas.agents.*;
+import mas.com.DataRequest;
+import mas.com.Request;
 import mas.structuregraph.Castle;
 
 
-public class SayThereGraphBehaviour extends TickerBehaviour{
+public class SayRequest extends TickerBehaviour{
 	/**
 	 * 
 	 */
@@ -19,9 +23,11 @@ public class SayThereGraphBehaviour extends TickerBehaviour{
 	private DFAgentDescription[] listeAgents;
 	private Castle castle;
 	private AgentLock un_move;
+	private DummyExploAgent agent;
 	
-	public SayThereGraphBehaviour (final Agent myagent, DFAgentDescription[] listeAgents,Castle castle,AgentLock un_move) {
+	public SayRequest (final DummyExploAgent myagent, DFAgentDescription[] listeAgents,Castle castle,AgentLock un_move) {
 		super(myagent, 500);
+		this.agent = myagent;
 		//this.graph = graph;
 		this.listeAgents = listeAgents;
 		this.castle = castle;
@@ -35,11 +41,22 @@ public class SayThereGraphBehaviour extends TickerBehaviour{
 		String myPosition=((mas.abstractAgent)this.myAgent).getCurrentPosition();
 		ACLMessage msg=new ACLMessage(ACLMessage.REQUEST);
 		msg.setSender(this.myAgent.getAID());
-		if(!castle.is_done_visited())
+		/*
+		if(!castle.is_done_visited()){
 			msg.setContent("GiveGraph! ::"+myPosition);
-		else
+		}
+		else{
 			msg.setContent("There! ::"+myPosition);
+		}
+		*/
+		try {
+			msg.setContentObject(new DataRequest(this.agent,Request.Graph));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
+		/*Evite de parler avec quelqu'un si je suis déja en conversation avec*/
 		HashSet<AID> not_send = un_move.locked_move();
 		
 		for ( DFAgentDescription agent : listeAgents ){

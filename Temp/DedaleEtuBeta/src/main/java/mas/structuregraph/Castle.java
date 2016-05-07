@@ -10,6 +10,7 @@ import jade.core.AID;
 
 import java.util.LinkedList;
 
+import mas.agents.AgentInfo;
 //import mas.agents.CopyOfDummyExploAgent;
 import mas.agents.DummyExploAgent;
 
@@ -20,9 +21,14 @@ public class Castle {
 	private Graph gstream;
 	/*Whether if we have visited every room or not*/
 	private boolean done_visited = false;
+	
+	/**/
+	private HashMap<AID,AgentInfo> agents;
+	private HashSet<AgentInfo> golems;
+	
 	/*Try to guess where are each agent*/
-	private HashMap<AID,String> agents_position;
-	private HashMap<AID,Integer> agents_position_probability;
+	/*private HashMap<AID,String> agents_position;
+	private HashMap<AID,Integer> agents_position_probability;*/
 	
 	private String last_id = "";
 	
@@ -59,11 +65,23 @@ public class Castle {
 	}
 	
 	public HashMap<Room,Integer> get_occupied_room(){
+		/*
 		//int deviance = 20;
 		HashMap<Room,Integer> result = new HashMap<Room,Integer>();
 		for(AID agent : agents_position_probability.keySet()){
 			Room r = this.get_room(agents_position.get(agent),-1);
 			int prob = this.agents_position_probability.get(agent);
+			if(result.get(r) == null || result.get(r) < prob){
+				result.remove(r);
+				result.put(r,prob);
+			}
+		}
+		return result;
+		 */
+		HashMap<Room,Integer> result = new HashMap<Room,Integer>();
+		for(AgentInfo agent_info : agents.values()){
+			Room r = this.get_room(agent_info.getPosition(),-1);
+			int prob = agent_info.getWhen_my_tick();
 			if(result.get(r) == null || result.get(r) < prob){
 				result.remove(r);
 				result.put(r,prob);
@@ -111,6 +129,16 @@ public class Castle {
 		return the_room;
 	}
 	
+	public HashSet<Room> get_treasure_rooms(int backPack){
+		HashSet<Room> treasures = new HashSet<Room>();
+		for(Room potential_room : rooms.values()){
+			if(potential_room.get_treasure_value() > 0 && potential_room.get_treasure_value() <= backPack)
+				/*Add a copy of the room*/
+				treasures.add(potential_room);
+		}
+		return treasures;
+	}
+	
 	public void add_room(Room room){
 		if(!this.rooms.containsKey(room.getId()))
 			this.rooms.put(room.getId(), room);
@@ -147,7 +175,7 @@ public class Castle {
 
 	
 	
-	public Castle(DummyExploAgent agent,HashMap<AID,String> agents_position,HashMap<AID,Integer> agents_position_probability){
+	public Castle(DummyExploAgent agent,HashMap<AID,AgentInfo> agents){
 		String nodeStyle_visited="node.visited {"+"fill-color: green;"+"}";
 		String nodeStyle_treasure="node.treasure {"+"fill-color: yellow;"+"}";
 		String nodeStyle_position="node.there {"+"fill-color: red;"+"}";
@@ -159,8 +187,10 @@ public class Castle {
 		gstream.display();
 		Room first_room = new Room(agent.getCurrentPosition(),this,agent.getWhen());
 		this.add_room(first_room);
-		this.agents_position = agents_position;
-		this.agents_position_probability = agents_position_probability;
+		this.agents = agents;
+		
+		//this.agents_position = agents_position;
+		//this.agents_position_probability = agents_position_probability;
 		last_id = first_room.getId();
 		this.setThere(first_room);
 		//this.sources.add(first_room);
@@ -190,7 +220,7 @@ public class Castle {
 		/*Determine which room have to be sent*/
 		HashSet<Room> to_send = new HashSet<Room>();
 		for(Room potential_room : rooms.values()){
-			if(potential_room.getWhen() > when_last_send || potential_room.get_treasure_value() > 0)
+			if(potential_room.getWhen() > when_last_send)
 				/*Add a copy of the room*/
 				to_send.add(new Room(potential_room));
 		}
