@@ -13,9 +13,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
+import mas.agents.AgentInfo;
 import mas.agents.AgentLock;
 import mas.agents.DummyExploAgent;
 import mas.com.DataInform;
+import mas.com.InfoPartage;
 import mas.com.Inform;
 import mas.structuregraph.Castle;
 import mas.structuregraph.Room;
@@ -63,15 +65,19 @@ public class SayInform extends TickerBehaviour{
 					if(to_send.isEmpty()){
 						System.out.println("ERRRREUUUR");
 					}
+					HashSet<AgentInfo> agent_send = agent.agent_to_send(hmack.get(aid),aid);
+					
+					
 					Statistique.graph_envoye += 1;
-					msg.setContentObject(new DataInform(this.agent,Inform.Graph,to_send));
+					msg.setContentObject(new DataInform(this.agent,Inform.Graph,new InfoPartage(to_send,agent_send)));
 					//
 				}
 				else{
 					HashSet<Room> to_send = castle.room_to_send(0);
+					HashSet<AgentInfo> agent_send = agent.agent_to_send(0,aid);
 					//if(to_send.isEmpty()) return;
 					Statistique.graph_envoye += 1;
-					msg.setContentObject(new DataInform(this.agent,Inform.Graph,to_send));
+					msg.setContentObject(new DataInform(this.agent,Inform.Graph,new InfoPartage(to_send,agent_send)));
 					//System.out.println(myAgent.getName() + "send " + to_send.toString() );
 				}
 				hmsend.remove(aid);

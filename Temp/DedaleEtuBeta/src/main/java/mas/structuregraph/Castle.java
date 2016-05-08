@@ -1,5 +1,6 @@
 package mas.structuregraph;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -25,6 +26,7 @@ public class Castle {
 	/**/
 	private HashMap<AID,AgentInfo> agents;
 	private HashSet<AgentInfo> golems;
+	private ArrayList<Room> treasures;
 	
 	/*Try to guess where are each agent*/
 	/*private HashMap<AID,String> agents_position;
@@ -35,6 +37,14 @@ public class Castle {
 	private int last_update = -1;
 	
 	private int nb_test = 0;
+	
+	public void add_treasure(Room r){
+		treasures.add(r);
+	}
+	
+	public ArrayList<Room> get_treasures(){
+		return treasures;
+	}
 	
 	public boolean have_to_send(Integer when){
 		//bourin_update();
@@ -188,6 +198,7 @@ public class Castle {
 		Room first_room = new Room(agent.getCurrentPosition(),this,agent.getWhen());
 		this.add_room(first_room);
 		this.agents = agents;
+		this.treasures = new ArrayList<Room>();
 		
 		//this.agents_position = agents_position;
 		//this.agents_position_probability = agents_position_probability;
@@ -256,7 +267,7 @@ public class Castle {
 	}
 	
 	
-	public String where_to_to_heavy(String position,int when){
+	public String where_to_go_explo(String position,int when){
 		int deviance = 10;
 		HashMap<Room,Integer> occupied = get_occupied_room();
 		double max_reward = 0;

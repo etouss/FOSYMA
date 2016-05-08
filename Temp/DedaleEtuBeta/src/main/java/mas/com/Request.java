@@ -1,5 +1,7 @@
 package mas.com;
 
 public enum Request {
-	Graph;
+	Graph,
+	Safe,
+	Target;
 }

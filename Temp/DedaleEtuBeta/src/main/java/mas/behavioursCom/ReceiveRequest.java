@@ -20,6 +20,7 @@ import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import mas.agents.AgentInfo;
 import mas.agents.AgentLock;
+import mas.agents.AgentMode;
 import mas.agents.DummyExploAgent;
 import mas.com.Confirm;
 import mas.com.DataConfirm;
@@ -69,69 +70,19 @@ public class ReceiveRequest extends TickerBehaviour{
 				DataRequest data = (DataRequest) msg_rec.getContentObject();
 			switch(data.getRequete()){
 			case Graph:
-				//System.out.println(myAgent.getLocalName()+"<----Result received from "+msg.getSender().getLocalName()+" ,content= "+msg.getContent());
-				//int count = Integer.parseInt(msg.getContent());
-				int when = ((DummyExploAgent)this.myAgent).getWhen();
-				agents.remove(msg_rec.getSender());
-				//agents_position_probability.remove(msg_rec.getSender());
-				AgentInfo info = data.getInfo();
-				info.setWhen(when);
-				agents.put(msg_rec.getSender(),info);
-				//agents_position_probability.put(msg_rec.getSender(),when);
-				//System.out.println(this.myAgent.getLocalName()+" ToSend :: "+msg.getSender());
-				
-				String myPosition=((mas.abstractAgent)this.myAgent).getCurrentPosition();
-				ACLMessage msg_sent=new ACLMessage(ACLMessage.INFORM);
-				msg_sent.setSender(this.myAgent.getAID());
-				
-				if(castle.have_to_send(hmack.get(msg_rec.getSender()))){
-					//System.out.println("Send"+hmack.size());
-					msg_sent.setContentObject(new DataInform(this.agent,Inform.Sending,null));
-					un_move.set_lock_move(msg_rec.getSender());
-					Statistique.graph_propose ++;
-				}
-				else{
-					//System.out.println("Synch");
-					msg_sent.setContentObject(new DataInform(this.agent,Inform.Synch,null));
-				}
-				
-				msg_sent.addReceiver(msg_rec.getSender());
-				((mas.abstractAgent)this.myAgent).sendMessage(msg_sent);
+				deal_with_grah(msg_rec,data);
+				break;
+			case Safe:
+				deal_with_safe(msg_rec,data);
+				break;
+			case Target:
+				deal_with_target(msg_rec,data);
+				break;
+			default:
 				break;
 				
 			}
-			/*
-			if(msg_rec.getContent().contains("There!")){
-				int when = ((DummyExploAgent)this.myAgent).getWhen();
-				agents_position.remove(msg_rec.getSender());
-				agents_position_probability.remove(msg_rec.getSender());
-				agents_position.put(msg_rec.getSender(),msg_rec.getContent().split("::")[1]);
-				agents_position_probability.put(msg_rec.getSender(),when);
-			}
-			if(msg_rec.getContent().contains("Sending!")){
-				int when = ((DummyExploAgent)this.myAgent).getWhen();
-				agents_position.remove(msg_rec.getSender());
-				agents_position_probability.remove(msg_rec.getSender());
-				agents_position.put(msg_rec.getSender(),msg_rec.getContent().split("::")[1]);
-				agents_position_probability.put(msg_rec.getSender(),when);
-				un_move.set_lock_move(msg_rec.getSender());
-				
-				String myPosition=((mas.abstractAgent)this.myAgent).getCurrentPosition();
-				ACLMessage msg=new ACLMessage(ACLMessage.CONFIRM);
-				msg.setSender(this.myAgent.getAID());
-				msg.setContent("AckSending! ::"+myPosition);
-				msg.addReceiver(msg_rec.getSender());
-				((mas.abstractAgent)this.myAgent).sendMessage(msg);
-				
-			}
-			if(msg_rec.getContent().contains("Synchro!")){
-				int when = ((DummyExploAgent)this.myAgent).getWhen();
-				agents_position.remove(msg_rec.getSender());
-				agents_position_probability.remove(msg_rec.getSender());
-				agents_position.put(msg_rec.getSender(),msg_rec.getContent().split("::")[1]);
-				agents_position_probability.put(msg_rec.getSender(),when);
-			}
-			*/
+			
 			}
 			catch (UnreadableException e) {
 				// TODO Auto-generated catch block
@@ -145,6 +96,72 @@ public class ReceiveRequest extends TickerBehaviour{
 		}
 	}
 
+	private void deal_with_grah(ACLMessage msg_rec,DataRequest data) throws IOException{
+		//System.out.println(myAgent.getLocalName()+"<----Result received from "+msg.getSender().getLocalName()+" ,content= "+msg.getContent());
+		//int count = Integer.parseInt(msg.getContent());
+		int when = ((DummyExploAgent)this.myAgent).getWhen();
+		agents.remove(msg_rec.getSender());
+		//agents_position_probability.remove(msg_rec.getSender());
+		AgentInfo info = data.getInfo();
+		info.setWhen(when);
+		agents.put(msg_rec.getSender(),info);
+		//agents_position_probability.put(msg_rec.getSender(),when);
+		//System.out.println(this.myAgent.getLocalName()+" ToSend :: "+msg.getSender());
+		
+		ACLMessage msg_sent=new ACLMessage(ACLMessage.INFORM);
+		msg_sent.setSender(this.myAgent.getAID());
+		
+		if(castle.have_to_send(hmack.get(msg_rec.getSender()))||agent.have_to_send(hmack.get(msg_rec.getSender()))){
+			//System.out.println("Send"+hmack.size());
+			msg_sent.setContentObject(new DataInform(this.agent,Inform.Sending,null));
+			un_move.set_lock_move(msg_rec.getSender());
+			Statistique.graph_propose ++;
+		}
+		else{
+			//System.out.println("Synch");
+			msg_sent.setContentObject(new DataInform(this.agent,Inform.Synch,null));
+		}
+		
+		msg_sent.addReceiver(msg_rec.getSender());
+		((mas.abstractAgent)this.myAgent).sendMessage(msg_sent);
+	}
+	
+	private void deal_with_safe(ACLMessage msg_rec,DataRequest data) throws IOException{
+		int when = ((DummyExploAgent)this.myAgent).getWhen();
+		agents.remove(msg_rec.getSender());
+		AgentInfo info = data.getInfo();
+		info.setWhen(when);
+		agents.put(msg_rec.getSender(),info);
+		
+		if(agent.getMode() != AgentMode.SAFE){
+			agent.setSafe(data.get_leader_num()+1,data.getInfo().getId());
+		
+			String myPosition=((mas.abstractAgent)this.myAgent).getCurrentPosition();
+			ACLMessage msg_sent=new ACLMessage(ACLMessage.CONFIRM);
+			msg_sent.setSender(this.myAgent.getAID());
+			
+			msg_sent.setContentObject(new DataConfirm(this.agent,Confirm.ConfirmSafe,0));
+			un_move.set_lock_move(msg_rec.getSender());
+			
+			msg_sent.addReceiver(msg_rec.getSender());
+			((mas.abstractAgent)this.myAgent).sendMessage(msg_sent);
+		}
+		else if(msg_rec.getSender() == agent.get_leader()){
+			String myPosition=((mas.abstractAgent)this.myAgent).getCurrentPosition();
+			ACLMessage msg_sent=new ACLMessage(ACLMessage.CONFIRM);
+			msg_sent.setSender(this.myAgent.getAID());
+			
+			msg_sent.setContentObject(new DataConfirm(this.agent,Confirm.ConfirmSafe,0));
+			un_move.set_lock_move(msg_rec.getSender());
+			
+			msg_sent.addReceiver(msg_rec.getSender());
+			((mas.abstractAgent)this.myAgent).sendMessage(msg_sent);
+		}
+	}
+
+	private void deal_with_target(ACLMessage msg_rec,DataRequest data) throws IOException{
+		
+	}
 
 }
 

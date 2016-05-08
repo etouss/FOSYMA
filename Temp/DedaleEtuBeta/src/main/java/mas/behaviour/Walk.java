@@ -10,7 +10,9 @@ import env.Attribute;
 import env.Couple;
 import jade.core.AID;
 import jade.core.behaviours.TickerBehaviour;
+import mas.agents.AgentInfo;
 import mas.agents.AgentLock;
+import mas.agents.AgentMode;
 import mas.agents.DummyExploAgent;
 import mas.structuregraph.Castle;
 import mas.structuregraph.Room;
@@ -31,13 +33,16 @@ public class Walk extends TickerBehaviour{
 	 *  
 	 */
 	private static final long serialVersionUID = 9088209402507795289L;
+	private static final long BLOQUAGE_MAX = 10;
+	
 	private Castle castle;
 	private Random r= new Random();
-	private int count = 0;
+	//private int count = 0;
 	private HashSet<AID> lsend;
 	private HashSet<AID> lack;
 	private AgentLock un_move;
 	private DummyExploAgent agent;
+	private int bloquage = 0;
 
 	public Walk (final DummyExploAgent myagent,Castle castle,HashSet<AID> lsend,HashSet<AID> lack,AgentLock un_move) {
 		super(myagent, 500);
@@ -97,92 +102,123 @@ public class Walk extends TickerBehaviour{
 			for(Attribute a:lattribute){
 				switch (a) {
 				case TREASURE:
-					System.out.println("My current backpack capacity is:"+ ((mas.abstractAgent)this.myAgent).getBackPackFreeSpace());
-					System.out.println("Value of the treasure on the current position: "+a.getValue());
-					//System.out.println(((DummyExploAgent)this.myAgent).getCastle().toString());
-					
-					//System.out.println("The agent grabbed :"+((mas.abstractAgent)this.myAgent).pick());
-					//System.out.println("the remaining backpack capacity is: "+ ((mas.abstractAgent)this.myAgent).getBackPackFreeSpace());
-					//System.out.println("The value of treasure on the current position: (unchanged before a new call to observe()): "+a.getValue());
-					//b=true;
+					//System.out.println("My current backpack capacity is:"+ ((mas.abstractAgent)this.myAgent).getBackPackFreeSpace());
+					//System.out.println("Value of the treasure on the current position: "+a.getValue());
 					
 					self.set_treasure_value((Integer) a.getValue(),when);
+					/*
 					try {
 						System.out.println("Press a key to allow the agent "+this.myAgent.getLocalName() +" to execute its next move");
 						System.in.read();
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					
+					*/
 					break;
-
 				default:
 					break;
 				}
 			}
 			
-			//If the agent picked (part of) the treasure
-			//if (b){
-			//	List<Couple<String,List<Attribute>>> lobs2=((mas.abstractAgent)this.myAgent).observe();//myPosition
-			//	System.out.println("lobs after picking "+lobs2);
-			//}
 			
-			
-			
-			/*
-			boolean ok = false;
-			for(i = 0;i<lobs.size();i++){
-				if(!castle.is_visited(lobs.get(i).getLeft())){
-					ok = true;
-					break;
-				}
-			}
-			//Random move from the current position
-			if(!ok){
-				i=r.nextInt(lobs.size());
-			}
-			*/
-			//The move action (if any) should be the last action of your behaviour
-			
+			/*J'ai le droit de bouger / changer ssi mailbox vide*/
 			if(!lsend.isEmpty() && !lack.isEmpty())return;
 			
-			//String where = castle.where_to_to_page(myPosition,when);
 			
 			if(!un_move.is_ready_move()){
 				System.out.println("Waiting ");
 				return;
 			}
 			
+			//System.out.println(agent.getAID()+ ":::: "+agent.getAgents().size());
 			
 			
 			/*On détermine le mode dans lequelle on doit se placer*/
 			
 			/*On choisit alors le déplacement adapter*/
 			
-			agent.dm(self);
-			
+			//agent.dm(self);
+			/*
 			if(castle.is_done_visited()){
 				System.out.println("Propose :"+Statistique.graph_propose+" Send :"+Statistique.graph_envoye+" Recu : "+Statistique.graph_recu+" Ack :"+Statistique.graph_ack);
 				System.out.println(myAgent.getLocalName()+" is done !!" + Statistique.count);
-				/*int i = r.nextInt(lobs.size());
-				while(!((mas.abstractAgent)this.myAgent).moveTo(lobs.get(i).getLeft())){
-					i=r.nextInt(lobs.size());
-				}
-				*/
 				return;
 			}
 			count ++;
 			Statistique.count ++;
+			*/
 			
-			if(((mas.abstractAgent)this.myAgent).moveTo(castle.where_to_to_heavy(myPosition,when))){
-				return;
+			switch(agent.getMode()){
+			case EXPLORER:
+				
+				/*
+				if(((mas.abstractAgent)this.myAgent).moveTo(castle.where_to_go_explo(myPosition,when))){
+					bloquage = 0;
+					return;
+				}
+				bloquage ++;
+				if(bloquage > BLOQUAGE_MAX){
+					agent.setSafe(0,null);
+					bloquage = 0;
+				}*/
+				break;
+			case BLOCKER:
+				break;
+			case CATCHER:
+				break;
+			case COMMUNICATOR:
+				break;
+			case SAFE:
+				break;
+			case SAFE_READY:
+				if(((mas.abstractAgent)this.myAgent).moveTo(agent.getTarget())){
+					bloquage = 0;
+					this.agent.setExplo();
+					return;
+				}
+				break;
+			case UNDEFINED:
+				break;
+			default:
+				break;
 			}
-			//System.out.println("Deg");
+			
+			
 			
 			/*
 			}*/
 		}
 
+	}
+	
+	public void to_do_when_explo(){
+		castle.get_treasures().sort((Room r1, Room r2) -> r1.get_treasure_value() - r2.get_treasure_value());
+		for(Room r : castle.get_treasures()){
+			/*Je deviens bloqeur*/
+			if(r.getId().equals(agent.getCurrentPosition()) && r.get_treasure_value() > agent.getBackPackFreeSpace()){
+				agent.become_blocker();
+				castle.get_treasures().remove(r);
+				break;
+			}
+			else if(r.get_treasure_value() > agent.getBackPackFreeSpace()){
+				castle.get_treasures().remove(r);
+				continue;
+			}
+			else if(r.get_treasure_value() <= agent.getBackPackFreeSpace()){
+				boolean mine = true;
+				for(AgentInfo ai : agent.getAgents().values()){
+					if(ai.getFreeSac() >= r.get_treasure_value() && r.get_treasure_value() < agent.getBackPackFreeSpace()){
+						mine = false;
+						break;
+					}
+				}
+				if(mine){
+					agent.become_catcher(r);
+					break;
+				}
+			}
+		}
+		/*Stay explo*/
 	}
 
 }

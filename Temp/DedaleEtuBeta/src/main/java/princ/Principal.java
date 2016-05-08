@@ -284,7 +284,7 @@ public class Principal {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		/*
 		c = containerList.get("container0");
 		agentName="Explo4";
 		try {
@@ -327,7 +327,7 @@ public class Principal {
 			e.printStackTrace();
 		}
 		
-		/*
+		
 		c = containerList.get("container0");
 		agentName="Explo7";
 		try {

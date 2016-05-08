@@ -83,11 +83,13 @@ public class Room implements Serializable {
 			castle.set_last_update(when);
 			this.when = when;
 			treasure_value = value;
+			castle.add_treasure(this);
 		}
 		if(this.treasure_value > value){
 			castle.set_last_update(when);
 			this.when = when;
 			treasure_value = value;
+			castle.add_treasure(this);
 		}
 	}
 	

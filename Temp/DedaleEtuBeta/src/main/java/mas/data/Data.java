@@ -9,7 +9,7 @@ import mas.agents.DummyExploAgent;
 public class Data {
 	
 	/*Donné de réglagle*/
-	private static final int nb_tick_maximal = 0;
+	//private static final int nb_tick_maximal = 0;
 	
 	/*Donnée fixé*/
 	private DummyExploAgent me;
@@ -19,12 +19,6 @@ public class Data {
 	
 	/*Donné potentiellement calculé et probabilisé*/
 	
-	/*Moyenne des sac connue * nb_agent*/
-	public int total_back_pack;
-	public int total_back_pack_free;
-	public int mean_back_pack_free;
-	public int best_pack_prob;
-	public double knowledge_validity;
 	
 	
 	
@@ -36,6 +30,21 @@ public class Data {
 		this.me = me;
 		this.agents = me.getAgents();
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	/*Moyenne des sac connue * nb_agent*/
+	public int total_back_pack;
+	public int total_back_pack_free;
+	public int mean_back_pack_free;
+	public int best_pack_prob;
+	public double knowledge_validity;
+	
 	
 	public void update_value(int when){
 		/*Moyenne sur les sacs connues*/

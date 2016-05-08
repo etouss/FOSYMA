@@ -17,6 +17,7 @@ import mas.agents.DummyExploAgent;
 import mas.com.Confirm;
 import mas.com.DataConfirm;
 import mas.com.DataInform;
+import mas.com.InfoPartage;
 import mas.structuregraph.Castle;
 import mas.structuregraph.Room;
 import statistique.Statistique;
@@ -62,8 +63,16 @@ public class ReceiveInform extends TickerBehaviour{
 				agents.put(msg.getSender(),info_1);
 				switch(data_info.getInform()){
 					case Graph:
-						HashSet<Room> rooms = (HashSet<Room>)data_info.getData();
-						castle.update_castle(rooms,((DummyExploAgent)this.myAgent).getWhen());
+						InfoPartage info_part  = (InfoPartage)data_info.getData();
+						HashSet<Room> rooms = info_part.get_room_to_send();
+						HashSet<AgentInfo> infos = info_part.get_agent_to_send();
+						if(rooms != null){
+							castle.update_castle(rooms,((DummyExploAgent)this.myAgent).getWhen());
+						}
+						if(infos != null){
+							agent.update_info(infos,((DummyExploAgent)this.myAgent).getWhen());
+						}
+						
 						Statistique.graph_recu += 1;
 						lack.add(msg.getSender());
 					break;

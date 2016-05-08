@@ -6,5 +6,6 @@ public enum AgentMode {
 	BLOCKER,
 	COMMUNICATOR,
 	SAFE,
+	SAFE_READY,
 	UNDEFINED;
 }

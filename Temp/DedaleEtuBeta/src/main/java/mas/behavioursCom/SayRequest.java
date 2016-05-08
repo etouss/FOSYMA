@@ -37,20 +37,44 @@ public class SayRequest extends TickerBehaviour{
 
 	@Override
 	public void onTick() {
-		//String myPosition=((mas.abstractAgent)this.myAgent).getCurrentPosition();
+		if(agent.getMode() != AgentMode.SAFE){
+			//String myPosition=((mas.abstractAgent)this.myAgent).getCurrentPosition();
+			this.say_explo();
+		}
+		else{
+			this.say_safe();
+		}
+		
+
+	}
+	
+	private void say_safe(){
 		String myPosition=((mas.abstractAgent)this.myAgent).getCurrentPosition();
 		ACLMessage msg=new ACLMessage(ACLMessage.REQUEST);
 		msg.setSender(this.myAgent.getAID());
-		/*
-		if(!castle.is_done_visited()){
-			msg.setContent("GiveGraph! ::"+myPosition);
-		}
-		else{
-			msg.setContent("There! ::"+myPosition);
-		}
-		*/
 		try {
-			msg.setContentObject(new DataRequest(this.agent,Request.Graph));
+			msg.setContentObject(new DataRequest(this.agent,Request.Safe,agent.get_leader_num()));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		/*Evite de parler avec quelqu'un si je suis déja en conversation avec*/
+		HashSet<AID> not_send = un_move.locked_move();
+		
+		for ( DFAgentDescription agent : listeAgents ){
+			if (!agent.getName().equals(this.myAgent.getAID()) && !not_send.contains(agent.getName()) && !this.agent.getContrainte().keySet().contains(agent.getName()))
+				msg.addReceiver(agent.getName());
+		}
+		((mas.abstractAgent)this.myAgent).sendMessage(msg);
+	}
+	
+	private void say_explo(){
+		String myPosition=((mas.abstractAgent)this.myAgent).getCurrentPosition();
+		ACLMessage msg=new ACLMessage(ACLMessage.REQUEST);
+		msg.setSender(this.myAgent.getAID());
+		try {
+			msg.setContentObject(new DataRequest(this.agent,Request.Graph,-1));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -64,9 +88,6 @@ public class SayRequest extends TickerBehaviour{
 				msg.addReceiver(agent.getName());
 		}
 		((mas.abstractAgent)this.myAgent).sendMessage(msg);
-
-		
-
 	}
 
 }

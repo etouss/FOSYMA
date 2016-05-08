@@ -31,16 +31,30 @@ public class DummyExploAgent extends abstractAgent{
 	private static final long serialVersionUID = -1784844593772918359L;
 	private Castle castle;
 	private int when= 0;
-	private int trueTick;
 	private AgentMode mode = AgentMode.EXPLORER;
 	private String target = null;
 	private HashMap<AID,AgentInfo> agents;
 	private Data data;
-	public int totalbackpack;
+	private int totalbackpack;
 	private AgentDescisionMaker dm;
+	private int last_update_agent;
+	
+	/*Safe MODE*/
+	private int leader_num = -1;
+	private AID leader_id = null;
+	private HashMap<AID,HashSet<String>> contrainte;
 	//private boolean done = false;
+	
+	public void add_contrainte(AID id, HashSet<String> target){
+		contrainte.remove(id);
+		contrainte.put(id,target);
+	}
+	
+	public HashMap<AID,HashSet<String>> getContrainte(){
+		return contrainte;
+	}
 
-
+	
 
 	/**
 	 * This method is automatically called when "agent".start() is executed.
@@ -129,18 +143,18 @@ public class DummyExploAgent extends abstractAgent{
 
 		System.out.println("the agent "+this.getLocalName()+ " is started");
 		totalbackpack = this.getBackPackFreeSpace();
-		data = new Data(this,result.length);
-		dm = new AgentDescisionMaker(this);
+		//data = new Data(this,result.length);
+		//dm = new AgentDescisionMaker(this);
 
 	}
 	
 	public void incWhen(){
-		agents.remove(this.getAID());
-		AgentInfo ai = new AgentInfo(this,0);
-		ai.setWhen(when+1);
-		agents.put(getAID(), ai);
+		//agents.remove(this.getAID());
+		//AgentInfo ai = new AgentInfo(this,0);
+		//ai.setWhen(when+1);
+		//agents.put(getAID(), ai);
 		this.when++;
-		data.update_value(this.when);
+		//data.update_value(this.when);
 	}
 	
 	public int getWhen(){
@@ -163,21 +177,86 @@ public class DummyExploAgent extends abstractAgent{
 		return this.target;
 	}
 	
-	public void setMode(AgentMode mode){
+	/*public void setMode(AgentMode mode){
 		this.mode = mode;
+	}*/
+	
+	public void setSafe(int leader_num,AID leader){
+		this.mode = AgentMode.SAFE;
+		this.leader_num = leader_num;
+		this.leader_id = leader;
+		contrainte = new HashMap<AID,HashSet<String>>();
+	}
+	
+	public void setExplo(){
+		this.mode = AgentMode.EXPLORER;
+		this.leader_num = -1;
+		this.leader_id = null;
+		contrainte = null;
+		target = null;
 	}
 	
 	
 	public Data getData(){
 		return data;
 	}
-	
-	public int getTick(){
-		return trueTick;
-	}
+
 	
 	public void dm(Room r){
 		dm.on_treasure(r);
+	}
+	
+	public int get_totalbackpack(){
+		return this.totalbackpack;
+	}
+	
+	public int get_leader_num(){
+		return this.leader_num;
+	}
+	
+	public void set_leader_num(int leader_num){
+		this.leader_num = leader_num;
+	}
+	
+	public void set_leader(AID leader){
+		this.leader_id = leader;
+	}
+	
+	public AID get_leader(){
+		return leader_id;
+	}
+	
+	public HashSet<AgentInfo> agent_to_send(int when, AID to_who){
+		HashSet<AgentInfo> result = new HashSet<AgentInfo>();
+		for(AgentInfo info : agents.values()){
+			if(!to_who.equals(info.getId()) && info.getWhen_my_tick()>when){
+				result.add(info);
+			}
+		}
+		return result;
+	}
+	
+	public void update_info(HashSet<AgentInfo> infos_recu,int when){
+		for(AgentInfo a_info_recu : infos_recu){
+			if(!agents.containsKey(a_info_recu.getId())){
+				a_info_recu.setWhen(when);
+				agents.put(a_info_recu.getId(), a_info_recu);
+				this.last_update_agent = when;
+				continue;
+			}
+			AgentInfo known_info = agents.get(a_info_recu.getId());
+			if(known_info.getWhen() < a_info_recu.getWhen()){
+				a_info_recu.setWhen(when);
+				agents.remove(a_info_recu.getId());
+				agents.put(a_info_recu.getId(), a_info_recu);
+				this.last_update_agent = when;
+			}
+			
+		}
+	}
+	
+	public boolean have_to_send(int when){
+		return when < last_update_agent;
 	}
 	
 	/**

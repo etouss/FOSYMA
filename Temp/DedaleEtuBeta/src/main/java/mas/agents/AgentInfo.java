@@ -18,6 +18,7 @@ public class AgentInfo implements Serializable{
 	private int delta;
 	private int total_sac;
 	
+	
 	public AgentInfo(DummyExploAgent agent,int delta){
 		id = agent.getAID();
 		position = agent.getCurrentPosition();
@@ -25,8 +26,12 @@ public class AgentInfo implements Serializable{
 		when_his_tick = agent.getWhen();
 		mode = agent.getMode();
 		target = agent.getTarget();
-		this.total_sac = agent.totalbackpack;
+		this.total_sac = agent.get_totalbackpack();
 		this.delta = delta;
+	}
+	
+	public AID getId(){
+		return id;
 	}
 	
 	public String getPosition(){
