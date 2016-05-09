@@ -57,6 +57,8 @@ public class Room implements Serializable {
 		prev_page_ranking = page_ranking;
 	}*/
 	
+	
+	
 	public void add_link(Room link_room,int when_called){
 		if(!this.linked_rooms.contains(link_room)){
 			this.linked_rooms.add(link_room);
@@ -83,13 +85,16 @@ public class Room implements Serializable {
 			castle.set_last_update(when);
 			this.when = when;
 			treasure_value = value;
-			castle.add_treasure(this);
+			castle.add_treasure(this,when);
 		}
 		if(this.treasure_value > value){
 			castle.set_last_update(when);
 			this.when = when;
 			treasure_value = value;
-			castle.add_treasure(this);
+			castle.add_treasure(this,when);
+		}
+		if(value == 0){
+			castle.remove_treasure(this,when);
 		}
 	}
 	
@@ -174,7 +179,12 @@ public class Room implements Serializable {
 	
 	public double get_reward(double nb_unvisited,int step,int coef){
 		/*prop au truc inexploré*/
-		return nb_unvisited/((step+1)*coef*this.getLinkedRooms().size());
+		return nb_unvisited*20/((step+1)*coef*this.getLinkedRooms().size());
+	}
+	
+	public double get_reward_catch(int step,int coef){
+		/*prop au truc inexploré*/
+		return 100/((step+1)*coef);
 	}
 	
 	public int coef_occupied(int last_coef, Integer when_checked, int when){
@@ -186,12 +196,12 @@ public class Room implements Serializable {
 		return last_coef*deviance/Math.min(deviance,(when-when_checked)+1);
 	}
 	
-	public double reward(HashMap<Room,Integer> occupied,int when_asked){
+	public double reward(HashMap<Room,Integer> occupied,int when_asked,String wumpus){
 		HashSet<Room> already_visited = new HashSet<Room>();
 		LinkedList<Room> room_to_check = new LinkedList<Room>();
 		LinkedList<Integer> step_to_go = new LinkedList<Integer>();
 		LinkedList<Integer> coeficient_occupy = new LinkedList<Integer>();
-		double result = isVisited()?0:1;
+		double result = isVisited()?0:20;
 		/*double nb_unvisited_1 = 0;
 		for(Room r_linked : linked_rooms){
 			//if(occupied.contains(r_linked)) continue;
@@ -213,7 +223,7 @@ public class Room implements Serializable {
 			double nb_unvisited = 0;
 			for(Room r_linked : to_do.getLinkedRooms()){
 				//if(occupied.contains(r_linked)) continue;
-				if(!already_visited.contains(r_linked)){
+				if(!already_visited.contains(r_linked) && !r_linked.getId().equals(wumpus)){
 					nb_unvisited += r_linked.isVisited()?0:1;
 					room_to_check.add(r_linked);
 					step_to_go.add(step+1);
@@ -222,6 +232,38 @@ public class Room implements Serializable {
 				}
 			}
 			result += to_do.get_reward(nb_unvisited, step,coef);
+		}
+		//System.out.println(result);
+		return result;
+	}
+	
+	public double reward_spec(HashMap<Room,Integer> occupied,int when_asked,Room target,String wumpus){
+		HashSet<Room> already_visited = new HashSet<Room>();
+		LinkedList<Room> room_to_check = new LinkedList<Room>();
+		LinkedList<Integer> step_to_go = new LinkedList<Integer>();
+		LinkedList<Integer> coeficient_occupy = new LinkedList<Integer>();
+		double result = this.getId().equals(target)?0:100;
+		room_to_check.add(this);
+		step_to_go.add(0);
+		coeficient_occupy.add(1);
+		already_visited.add(this);
+		while(!room_to_check.isEmpty()){
+			Room to_do = room_to_check.removeFirst();
+			int step = step_to_go.removeFirst();
+			int coef = coeficient_occupy.removeFirst();
+			//double nb_unvisited = 0;
+			for(Room r_linked : to_do.getLinkedRooms()){
+				if(r_linked.equals(target)){
+					result += to_do.get_reward_catch(step,coef);
+					continue;
+				}
+				if(!already_visited.contains(r_linked) && !r_linked.getId().equals(wumpus)){
+					room_to_check.add(r_linked);
+					step_to_go.add(step+1);
+					coeficient_occupy.add(coef_occupied(coef,occupied.get(r_linked),when_asked));
+					already_visited.add(r_linked);
+				}
+			}
 		}
 		//System.out.println(result);
 		return result;

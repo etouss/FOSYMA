@@ -11,13 +11,13 @@ import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
-import mas.agents.AgentInfo;
 import mas.agents.AgentLock;
 import mas.agents.DummyExploAgent;
 import mas.com.Confirm;
 import mas.com.DataConfirm;
 import mas.com.DataInform;
 import mas.com.InfoPartage;
+import mas.data.AgentInfo;
 import mas.structuregraph.Castle;
 import mas.structuregraph.Room;
 import statistique.Statistique;
@@ -27,18 +27,14 @@ import statistique.Statistique;
 public class ReceiveInform extends TickerBehaviour{
 
 	private static final long serialVersionUID = 9088209402507795289L;
-	private Castle castle;
 	private HashSet<AID> lack;
-	private HashMap<AID,AgentInfo> agents;
 	private AgentLock un_move;
 	private DummyExploAgent agent;
 
 	private boolean finished=false;
 
-	public ReceiveInform (final DummyExploAgent myagent,Castle castle,HashSet<AID> lack,HashMap<AID,AgentInfo> agents,AgentLock un_move) {
+	public ReceiveInform (final DummyExploAgent myagent,HashSet<AID> lack,AgentLock un_move) {
 		super(myagent, 200);
-		this.castle = castle;
-		this.agents = agents;
 		this.un_move= un_move;
 		this.lack = lack;
 		this.agent = myagent;
@@ -56,21 +52,18 @@ public class ReceiveInform extends TickerBehaviour{
 			try {
 				DataInform data_info = (DataInform) msg.getContentObject();
 				int when = ((DummyExploAgent)this.myAgent).getWhen();
-				agents.remove(msg.getSender());
 				//agents_position_probability.remove(msg_rec.getSender());
-				AgentInfo info_1 = data_info.getInfo();
-				info_1.setWhen(when);
-				agents.put(msg.getSender(),info_1);
+				agent.getMeeting().update_meeting(data_info.getInfo(), when);
 				switch(data_info.getInform()){
 					case Graph:
 						InfoPartage info_part  = (InfoPartage)data_info.getData();
 						HashSet<Room> rooms = info_part.get_room_to_send();
 						HashSet<AgentInfo> infos = info_part.get_agent_to_send();
 						if(rooms != null){
-							castle.update_castle(rooms,((DummyExploAgent)this.myAgent).getWhen());
+							agent.getCastle().update_castle(rooms,((DummyExploAgent)this.myAgent).getWhen());
 						}
 						if(infos != null){
-							agent.update_info(infos,((DummyExploAgent)this.myAgent).getWhen());
+							agent.getMeeting().update_meeting(infos,((DummyExploAgent)this.myAgent).getWhen());
 						}
 						
 						Statistique.graph_recu += 1;
@@ -82,7 +75,7 @@ public class ReceiveInform extends TickerBehaviour{
 						//String myPosition=((mas.abstractAgent)this.myAgent).getCurrentPosition();
 						ACLMessage msg_s=new ACLMessage(ACLMessage.CONFIRM);
 						msg_s.setSender(this.myAgent.getAID());
-						msg_s.setContentObject(new DataConfirm(this.agent,Confirm.Send,0));
+						msg_s.setContentObject(new DataConfirm(agent.getMeeting().get_me(),Confirm.Send,0));
 						//msg.setContent("AckSending! ::"+myPosition);
 						msg_s.addReceiver(msg.getSender());
 						((mas.abstractAgent)this.myAgent).sendMessage(msg_s);

@@ -13,12 +13,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import mas.agents.AgentInfo;
 import mas.agents.AgentLock;
 import mas.agents.DummyExploAgent;
 import mas.com.DataInform;
 import mas.com.InfoPartage;
 import mas.com.Inform;
+import mas.data.AgentInfo;
 import mas.structuregraph.Castle;
 import mas.structuregraph.Room;
 import statistique.Statistique;
@@ -30,7 +30,6 @@ public class SayInform extends TickerBehaviour{
 	 * 
 	 */
 	private static final long serialVersionUID = -2058134622078521998L;
-	private Castle castle;
 	private HashSet<AID> lsend;
 	private HashMap<AID,Integer> hmsend;
 	private HashMap<AID,Integer> hmack;
@@ -38,9 +37,8 @@ public class SayInform extends TickerBehaviour{
 	private AgentLock un_move;
 	private DummyExploAgent agent;
 	
-	public SayInform (final DummyExploAgent myagent,Castle castle, HashSet<AID> lsend,HashMap<AID,Integer> hmsend,HashMap<AID,Integer> hmack,HashMap<AID,Long> hmcode,AgentLock un_move) {
+	public SayInform (final DummyExploAgent myagent, HashSet<AID> lsend,HashMap<AID,Integer> hmsend,HashMap<AID,Integer> hmack,HashMap<AID,Long> hmcode,AgentLock un_move) {
 		super(myagent, 500);
-		this.castle = castle;
 		this.lsend = lsend;
 		this.hmsend = hmsend;
 		this.hmack = hmack;
@@ -61,29 +59,19 @@ public class SayInform extends TickerBehaviour{
 			//System.out.println("Agent "+this.myAgent.getLocalName()+ " is trying to send graph to its friends: "+graph.toString());
 			try {
 				if(hmack.containsKey(aid)){
-					HashSet<Room> to_send = castle.room_to_send(hmack.get(aid));
-					if(to_send.isEmpty()){
-						System.out.println("ERRRREUUUR");
-					}
-					HashSet<AgentInfo> agent_send = agent.agent_to_send(hmack.get(aid),aid);
-					
-					
 					Statistique.graph_envoye += 1;
-					msg.setContentObject(new DataInform(this.agent,Inform.Graph,new InfoPartage(to_send,agent_send)));
+					msg.setContentObject(new DataInform(agent.getMeeting().get_me(),Inform.Graph,new InfoPartage(agent,hmack.get(aid),aid)));
 					//
 				}
 				else{
-					HashSet<Room> to_send = castle.room_to_send(0);
-					HashSet<AgentInfo> agent_send = agent.agent_to_send(0,aid);
-					//if(to_send.isEmpty()) return;
 					Statistique.graph_envoye += 1;
-					msg.setContentObject(new DataInform(this.agent,Inform.Graph,new InfoPartage(to_send,agent_send)));
+					msg.setContentObject(new DataInform(agent.getMeeting().get_me(),Inform.Graph,new InfoPartage(agent,0,aid)));
 					//System.out.println(myAgent.getName() + "send " + to_send.toString() );
 				}
 				hmsend.remove(aid);
 				hmcode.remove(aid);
 				hmsend.put(aid, ((DummyExploAgent)myAgent).getWhen());
-				hmcode.put(aid, castle.hash_castle());
+				hmcode.put(aid, agent.getCastle().hash_castle());
 				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

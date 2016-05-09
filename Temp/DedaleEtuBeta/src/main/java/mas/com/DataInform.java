@@ -2,8 +2,8 @@ package mas.com;
 
 import java.io.Serializable;
 
-import mas.agents.AgentInfo;
 import mas.agents.DummyExploAgent;
+import mas.data.AgentInfo;
 
 public class DataInform implements Serializable{
 	private Inform inform;
@@ -11,8 +11,8 @@ public class DataInform implements Serializable{
 	private Object data;
 	
 	/*DataSend through network whenever i am asking for more*/
-	public DataInform(DummyExploAgent agent, Inform inform, Object data){
-		this.info = new AgentInfo(agent,0);
+	public DataInform(AgentInfo info, Inform inform, Object data){
+		this.info = info;
 		this.inform = inform;
 		this.data = data;
 	}

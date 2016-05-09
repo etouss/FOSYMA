@@ -10,10 +10,10 @@ import env.Attribute;
 import env.Couple;
 import jade.core.AID;
 import jade.core.behaviours.TickerBehaviour;
-import mas.agents.AgentInfo;
 import mas.agents.AgentLock;
-import mas.agents.AgentMode;
 import mas.agents.DummyExploAgent;
+import mas.data.AgentInfo;
+import mas.data.AgentMode;
 import mas.structuregraph.Castle;
 import mas.structuregraph.Room;
 import statistique.Statistique;
@@ -33,20 +33,14 @@ public class Walk extends TickerBehaviour{
 	 *  
 	 */
 	private static final long serialVersionUID = 9088209402507795289L;
-	private static final long BLOQUAGE_MAX = 10;
 	
-	private Castle castle;
-	private Random r= new Random();
-	//private int count = 0;
 	private HashSet<AID> lsend;
 	private HashSet<AID> lack;
 	private AgentLock un_move;
 	private DummyExploAgent agent;
-	private int bloquage = 0;
 
-	public Walk (final DummyExploAgent myagent,Castle castle,HashSet<AID> lsend,HashSet<AID> lack,AgentLock un_move) {
+	public Walk (final DummyExploAgent myagent,HashSet<AID> lsend,HashSet<AID> lack,AgentLock un_move) {
 		super(myagent, 500);
-		this.castle = castle;
 		this.lsend = lsend;
 		this.lack = lack;
 		this.un_move = un_move;
@@ -69,17 +63,17 @@ public class Walk extends TickerBehaviour{
 			List<Couple<String,List<Attribute>>> lobs=((mas.abstractAgent)this.myAgent).observe();//myPosition
 			//System.out.println(this.myAgent.getLocalName()+" -- list of observables: "+lobs);
 			/*Add to graph*/
-			Room self = castle.get_room(myPosition,when);
+			Room self = agent.getCastle().get_room(myPosition,when);
 			
 			for(Couple<String,List<Attribute>> couple : lobs ){
 				if(couple.getLeft().equals(myPosition))continue;
-				Room linked_room = castle.get_room(couple.getLeft(),when);
-				castle.add_link(self,linked_room,when);
+				Room linked_room = agent.getCastle().get_room(couple.getLeft(),when);
+				agent.getCastle().add_link(self,linked_room,when);
 				linked_room.hash_room();
 			}
 			self.setVisited(when);
 			self.hash_room();
-			castle.setThere(self);
+			agent.getCastle().setThere(self);
 			//if(self.setVisited(when))
 			//	castle.page_ranking_reset();
 
@@ -114,6 +108,8 @@ public class Walk extends TickerBehaviour{
 						e.printStackTrace();
 					}
 					*/
+				case STENCH:
+					b = true;
 					break;
 				default:
 					break;
@@ -130,95 +126,29 @@ public class Walk extends TickerBehaviour{
 				return;
 			}
 			
-			//System.out.println(agent.getAID()+ ":::: "+agent.getAgents().size());
-			
-			
-			/*On détermine le mode dans lequelle on doit se placer*/
-			
-			/*On choisit alors le déplacement adapter*/
-			
-			//agent.dm(self);
-			/*
-			if(castle.is_done_visited()){
-				System.out.println("Propose :"+Statistique.graph_propose+" Send :"+Statistique.graph_envoye+" Recu : "+Statistique.graph_recu+" Ack :"+Statistique.graph_ack);
-				System.out.println(myAgent.getLocalName()+" is done !!" + Statistique.count);
+			if(((mas.abstractAgent)this.myAgent).moveTo(agent.getDM().where_to_go(b))){
 				return;
 			}
-			count ++;
-			Statistique.count ++;
-			*/
 			
-			switch(agent.getMode()){
-			case EXPLORER:
-				
-				/*
-				if(((mas.abstractAgent)this.myAgent).moveTo(castle.where_to_go_explo(myPosition,when))){
-					bloquage = 0;
-					return;
-				}
-				bloquage ++;
-				if(bloquage > BLOQUAGE_MAX){
-					agent.setSafe(0,null);
-					bloquage = 0;
-				}*/
-				break;
-			case BLOCKER:
-				break;
-			case CATCHER:
-				break;
-			case COMMUNICATOR:
-				break;
-			case SAFE:
-				break;
-			case SAFE_READY:
-				if(((mas.abstractAgent)this.myAgent).moveTo(agent.getTarget())){
-					bloquage = 0;
-					this.agent.setExplo();
-					return;
-				}
-				break;
-			case UNDEFINED:
-				break;
-			default:
-				break;
-			}
 			
+			/*Check Dead pour savoir si je me met a bouger !*/
 			
 			
 			/*
-			}*/
-		}
-
-	}
+			 * 
+			 * Pas le droit de bloquer si je suis le plus grand pack que je connais.
+			 * Sauf si wumpus pas loin.
+			 * 
+			 * 
+			 * Je connais au moins 1 agents je peux bloquer et je le fait des que je rencontre/connais un trésor (le plus grand de ce que je connais).
+			 * Ce qui sont les agents qui sont les plus grand continue l'explo et informe les plus petit ----> allez retour.
+			 * Quand exploration fini.
+			 * 
+			 * 
+			
+			*/
 	
-	public void to_do_when_explo(){
-		castle.get_treasures().sort((Room r1, Room r2) -> r1.get_treasure_value() - r2.get_treasure_value());
-		for(Room r : castle.get_treasures()){
-			/*Je deviens bloqeur*/
-			if(r.getId().equals(agent.getCurrentPosition()) && r.get_treasure_value() > agent.getBackPackFreeSpace()){
-				agent.become_blocker();
-				castle.get_treasures().remove(r);
-				break;
-			}
-			else if(r.get_treasure_value() > agent.getBackPackFreeSpace()){
-				castle.get_treasures().remove(r);
-				continue;
-			}
-			else if(r.get_treasure_value() <= agent.getBackPackFreeSpace()){
-				boolean mine = true;
-				for(AgentInfo ai : agent.getAgents().values()){
-					if(ai.getFreeSac() >= r.get_treasure_value() && r.get_treasure_value() < agent.getBackPackFreeSpace()){
-						mine = false;
-						break;
-					}
-				}
-				if(mine){
-					agent.become_catcher(r);
-					break;
-				}
-			}
+	
 		}
-		/*Stay explo*/
 	}
-
 }

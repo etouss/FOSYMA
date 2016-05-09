@@ -2,8 +2,8 @@ package mas.com;
 
 import java.io.Serializable;
 
-import mas.agents.AgentInfo;
 import mas.agents.DummyExploAgent;
+import mas.data.AgentInfo;
 
 public class DataConfirm implements Serializable{
 	private Confirm confirm;
@@ -11,8 +11,8 @@ public class DataConfirm implements Serializable{
 	private long hcode;
 	
 	/*DataSend through network whenever i am asking for more*/
-	public DataConfirm(DummyExploAgent agent, Confirm confirm, long hcode){
-		this.info = new AgentInfo(agent,0);
+	public DataConfirm(AgentInfo info, Confirm confirm, long hcode){
+		this.info = info;
 		this.confirm = confirm;
 		this.hcode = hcode;
 	}

@@ -18,9 +18,7 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
-import mas.agents.AgentInfo;
 import mas.agents.AgentLock;
-import mas.agents.AgentMode;
 import mas.agents.DummyExploAgent;
 import mas.com.Confirm;
 import mas.com.DataConfirm;
@@ -28,6 +26,8 @@ import mas.com.DataInform;
 import mas.com.DataRequest;
 import mas.com.Inform;
 import mas.com.Request;
+import mas.data.AgentInfo;
+import mas.data.AgentMode;
 import mas.structuregraph.Castle;
 import mas.structuregraph.Room;
 import statistique.Statistique;
@@ -38,22 +38,18 @@ public class ReceiveRequest extends TickerBehaviour{
 
 	private static final long serialVersionUID = 9088209402507795289L;
 	//private Castle castle;
-	private HashMap<AID,AgentInfo> agents;
 	//private HashMap<AID,Integer> agents_position_probability;
 	private AgentLock un_move;
 	private HashMap<AID,Integer> hmack;
-	private Castle castle;
 	private DummyExploAgent agent;
 
 	private boolean finished=false;
 
-	public ReceiveRequest (final DummyExploAgent myagent,Castle castle,HashMap<AID,Integer> hmack,HashMap<AID,AgentInfo> agents,AgentLock un_move) {
+	public ReceiveRequest (final DummyExploAgent myagent,HashMap<AID,Integer> hmack,AgentLock un_move) {
 		super(myagent, 200);
-		this.agents = agents;
 		this.agent = myagent;
 		this.un_move = un_move;
 		this.hmack = hmack;
-		this.castle = castle;
 		//super(myagent);
 	}
 
@@ -71,14 +67,6 @@ public class ReceiveRequest extends TickerBehaviour{
 			switch(data.getRequete()){
 			case Graph:
 				deal_with_grah(msg_rec,data);
-				break;
-			case Safe:
-				deal_with_safe(msg_rec,data);
-				break;
-			case Target:
-				deal_with_target(msg_rec,data);
-				break;
-			default:
 				break;
 				
 			}
@@ -100,32 +88,27 @@ public class ReceiveRequest extends TickerBehaviour{
 		//System.out.println(myAgent.getLocalName()+"<----Result received from "+msg.getSender().getLocalName()+" ,content= "+msg.getContent());
 		//int count = Integer.parseInt(msg.getContent());
 		int when = ((DummyExploAgent)this.myAgent).getWhen();
-		agents.remove(msg_rec.getSender());
-		//agents_position_probability.remove(msg_rec.getSender());
-		AgentInfo info = data.getInfo();
-		info.setWhen(when);
-		agents.put(msg_rec.getSender(),info);
-		//agents_position_probability.put(msg_rec.getSender(),when);
-		//System.out.println(this.myAgent.getLocalName()+" ToSend :: "+msg.getSender());
-		
+
+		agent.getMeeting().update_meeting(data.getInfo(), when);
 		ACLMessage msg_sent=new ACLMessage(ACLMessage.INFORM);
 		msg_sent.setSender(this.myAgent.getAID());
 		
-		if(castle.have_to_send(hmack.get(msg_rec.getSender()))||agent.have_to_send(hmack.get(msg_rec.getSender()))){
+		if(agent.getCastle().have_to_send(hmack.get(msg_rec.getSender()))||agent.getMeeting().have_to_send(hmack.get(msg_rec.getSender()))){
 			//System.out.println("Send"+hmack.size());
-			msg_sent.setContentObject(new DataInform(this.agent,Inform.Sending,null));
+			msg_sent.setContentObject(new DataInform(agent.getMeeting().get_me(),Inform.Sending,null));
 			un_move.set_lock_move(msg_rec.getSender());
 			Statistique.graph_propose ++;
 		}
 		else{
 			//System.out.println("Synch");
-			msg_sent.setContentObject(new DataInform(this.agent,Inform.Synch,null));
+			msg_sent.setContentObject(new DataInform(agent.getMeeting().get_me(),Inform.Synch,null));
 		}
 		
 		msg_sent.addReceiver(msg_rec.getSender());
 		((mas.abstractAgent)this.myAgent).sendMessage(msg_sent);
 	}
 	
+	/*
 	private void deal_with_safe(ACLMessage msg_rec,DataRequest data) throws IOException{
 		int when = ((DummyExploAgent)this.myAgent).getWhen();
 		agents.remove(msg_rec.getSender());
@@ -162,6 +145,7 @@ public class ReceiveRequest extends TickerBehaviour{
 	private void deal_with_target(ACLMessage msg_rec,DataRequest data) throws IOException{
 		
 	}
+	*/
 
 }
 

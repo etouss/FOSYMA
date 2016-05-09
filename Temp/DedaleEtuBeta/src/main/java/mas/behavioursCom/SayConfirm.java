@@ -23,16 +23,16 @@ public class SayConfirm extends TickerBehaviour{
 	private static final long serialVersionUID = -2058134622078521998L;
 	//private MyGraph graph;
 	private HashSet<AID> lack;
-	private Castle castle;
+	//private Castle castle;
 	private AgentLock un_move;
 	private DummyExploAgent agent;
 	
 	
-	public SayConfirm (final DummyExploAgent myagent, HashSet<AID> lack,Castle castle,AgentLock un_move) {
+	public SayConfirm (final DummyExploAgent myagent, HashSet<AID> lack,AgentLock un_move) {
 		super(myagent, 500);
 		//this.graph = graph;
 		this.lack = lack;
-		this.castle = castle;
+		//this.castle = castle;
 		this.un_move = un_move;
 		this.agent = myagent;
 		//super(myagent);
@@ -42,11 +42,11 @@ public class SayConfirm extends TickerBehaviour{
 	public void onTick() {
 		//String myPosition=((mas.abstractAgent)this.myAgent).getCurrentPosition();
 		//int when = ((DummyExploAgent)this.myAgent).getWhen();
-		String myPosition=((mas.abstractAgent)this.myAgent).getCurrentPosition();
 		ACLMessage msg=new ACLMessage(ACLMessage.CONFIRM);
 		msg.setSender(this.myAgent.getAID());
 		try {
-			msg.setContentObject(new DataConfirm(this.agent,Confirm.Graph,castle.hash_castle()));
+			//System.out.println(agent.getMeeting().get_me().getHisWhen());
+			msg.setContentObject(new DataConfirm(agent.getMeeting().get_me(),Confirm.Graph,agent.getCastle().hash_castle()));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

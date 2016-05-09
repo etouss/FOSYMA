@@ -11,9 +11,9 @@ import jade.core.AID;
 
 import java.util.LinkedList;
 
-import mas.agents.AgentInfo;
 //import mas.agents.CopyOfDummyExploAgent;
 import mas.agents.DummyExploAgent;
+import mas.data.AgentInfo;
 
 public class Castle {
 	/*Every room known in the castle*/
@@ -22,35 +22,47 @@ public class Castle {
 	private Graph gstream;
 	/*Whether if we have visited every room or not*/
 	private boolean done_visited = false;
-	
-	/**/
-	private HashMap<AID,AgentInfo> agents;
-	private HashSet<AgentInfo> golems;
+	private String last_id = "";
+	private int last_update = -1;
+	//private int nb_test = 0;
 	private ArrayList<Room> treasures;
 	
-	/*Try to guess where are each agent*/
-	/*private HashMap<AID,String> agents_position;
-	private HashMap<AID,Integer> agents_position_probability;*/
-	
-	private String last_id = "";
-	
-	private int last_update = -1;
-	
-	private int nb_test = 0;
-	
-	public void add_treasure(Room r){
-		treasures.add(r);
+	public ArrayList<Room> getTreasures(){
+		treasures.sort((Room u1, Room u2) -> u2.get_treasure_value() - u1.get_treasure_value());
+		return treasures;
 	}
 	
-	public ArrayList<Room> get_treasures(){
-		return treasures;
+	public String bestTreasure(){
+		int max = 0;
+		String id = "";
+		System.out.println(treasures.size());
+		for ( Room room: treasures ){
+			if(room.get_treasure_value() > max){
+				max = room.get_treasure_value();
+				id = room.getId();
+			}
+		}
+		System.out.println(id);
+		return id;
+	}
+	
+	public void add_treasure(Room r,int when){
+		last_update = when;
+		treasures.remove(r);
+		treasures.add(r);
+		//treasures.sort((Room u1, Room u2) -> u1.get_treasure_value() - u2.get_treasure_value());
+	}
+	
+	public void remove_treasure(Room r,int when){
+		last_update = when;
+		treasures.remove(r);
 	}
 	
 	public boolean have_to_send(Integer when){
 		//bourin_update();
 		if(when == null){
-			nb_test ++;
-			System.out.println("SERIOUS?"+ nb_test);
+			//nb_test ++;
+			//System.out.println("SERIOUS?"+ nb_test);
 			return true;
 		}
 		return last_update > when;
@@ -74,31 +86,6 @@ public class Castle {
 		this.last_update = when;
 	}
 	
-	public HashMap<Room,Integer> get_occupied_room(){
-		/*
-		//int deviance = 20;
-		HashMap<Room,Integer> result = new HashMap<Room,Integer>();
-		for(AID agent : agents_position_probability.keySet()){
-			Room r = this.get_room(agents_position.get(agent),-1);
-			int prob = this.agents_position_probability.get(agent);
-			if(result.get(r) == null || result.get(r) < prob){
-				result.remove(r);
-				result.put(r,prob);
-			}
-		}
-		return result;
-		 */
-		HashMap<Room,Integer> result = new HashMap<Room,Integer>();
-		for(AgentInfo agent_info : agents.values()){
-			Room r = this.get_room(agent_info.getPosition(),-1);
-			int prob = agent_info.getWhen_my_tick();
-			if(result.get(r) == null || result.get(r) < prob){
-				result.remove(r);
-				result.put(r,prob);
-			}
-		}
-		return result;
-	}
 	
 	public boolean is_visited(String id){
 		Room unknow = rooms.get(id);
@@ -138,16 +125,16 @@ public class Castle {
 		}
 		return the_room;
 	}
-	
+	/*
 	public HashSet<Room> get_treasure_rooms(int backPack){
 		HashSet<Room> treasures = new HashSet<Room>();
 		for(Room potential_room : rooms.values()){
 			if(potential_room.get_treasure_value() > 0 && potential_room.get_treasure_value() <= backPack)
-				/*Add a copy of the room*/
+				
 				treasures.add(potential_room);
 		}
 		return treasures;
-	}
+	}*/
 	
 	public void add_room(Room room){
 		if(!this.rooms.containsKey(room.getId()))
@@ -185,7 +172,7 @@ public class Castle {
 
 	
 	
-	public Castle(DummyExploAgent agent,HashMap<AID,AgentInfo> agents){
+	public Castle(DummyExploAgent agent){
 		String nodeStyle_visited="node.visited {"+"fill-color: green;"+"}";
 		String nodeStyle_treasure="node.treasure {"+"fill-color: yellow;"+"}";
 		String nodeStyle_position="node.there {"+"fill-color: red;"+"}";
@@ -197,7 +184,7 @@ public class Castle {
 		gstream.display();
 		Room first_room = new Room(agent.getCurrentPosition(),this,agent.getWhen());
 		this.add_room(first_room);
-		this.agents = agents;
+		//this.agents = agents;
 		this.treasures = new ArrayList<Room>();
 		
 		//this.agents_position = agents_position;
@@ -267,7 +254,7 @@ public class Castle {
 	}
 	
 	
-	public String where_to_go_explo(String position,int when){
+	/*public String where_to_go_explo(String position,int when){
 		int deviance = 10;
 		HashMap<Room,Integer> occupied = get_occupied_room();
 		double max_reward = 0;
@@ -287,6 +274,11 @@ public class Castle {
 		//System.out.println(max_reward);
 		return result;
 	}
+	*/
+	
+	
+	
+	
 	
 	public long hash_castle(){
 		long hash = 0;
